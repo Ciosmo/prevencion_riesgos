@@ -1,8 +1,9 @@
 import requests
 import pandas as pd
+import os
 from openpyxl import Workbook
 from bs4 import BeautifulSoup
-
+from urllib.parse import urljoin
 """
 1) Identificar correctamente el elemento(s) que contienen 
 informacion deseada
@@ -19,18 +20,23 @@ response = requests.get(web_page_url)
 
 soup = BeautifulSoup(response.text, 'lxml') 
 
+downloadDir = os.path.join(os.getcwd(), "downloadedFiles")
+os.makedirs(downloadDir, exist_ok=True)
+
 for a_tag in soup.find_all('a'):
     if a_tag.get("href") == "articles-708568_archivo_01.xlsx" and a_tag.get("title") == "Ir a EstadÃ­sticas de la Seguridad Social 2022":
-        dwnload = a_tag.get("href")
-        #http get
-        fileResponse = requests.get(dwnload)
+        downloadUrl = "https://www.suseso.cl/608/articles-708568_archivo_01.xlsx"
+        fileName = os.path.basename(downloadUrl)
+        localPath = os.path.join(downloadDir, fileName)
+        fileResponse = requests.get(downloadUrl)
+
         if fileResponse.status_code == 200:
-            localPath = r"C:/Users/ignac/Desktop/todo-django/capstone/csv_files/ultimoMes.xlsx"
-            with open(localPath, "wb") as local_file:
-                local_file.write(fileResponse.content) 
+            with open(localPath, "wb") as localFile:
+                localFile.write(fileResponse.content)
             print(f"{localPath} descargado correctamente")
         else:
-            print("no funciono")
+            print("No funciono")
+
 
      
 
