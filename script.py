@@ -6,14 +6,36 @@ from bs4 import BeautifulSoup
 """
 1) Identificar correctamente el elemento(s) que contienen 
 informacion deseada
- 
+   Elemento general: 
+    <div id="article_i__ss_ar_articulo_archivos_1" class="recuadros download-attr margen-abajo-md"><div class="recuadro format-pdf externo cid-507 aid-708568 binary-archivo_01 format-xlsx media"><a href="articles-708568_archivo_01.xlsx" title="Ir a Estadísticas de la Seguridad Social 2022" download="Estadísticas de la Seguridad Social 2022.pdf">Estadísticas de la Seguridad Social 2022</a></div></div>
+ Especificamete:
+    div que contiene el link de descarga > article_i__ss_ar_articulo_archivos_1
+    <a href="articles-708568_archivo_01.xlsx" title="Ir a Estadísticas de la Seguridad Social 2022" download="Estadísticas de la Seguridad Social 2022.pdf">Estadísticas de la Seguridad Social 2022</a>
 
 """
-# Define the URL of the CSV file to download
 web_page_url = "https://www.suseso.cl/608/w3-article-708568.html"
 
-# Send an HTTP GET request to the web page
 response = requests.get(web_page_url)
+
+soup = BeautifulSoup(response.text, 'lxml') 
+
+for a_tag in soup.find_all('a'):
+    if a_tag.get("href") == "articles-708568_archivo_01.xlsx" and a_tag.get("title") == "Ir a EstadÃ­sticas de la Seguridad Social 2022":
+        dwnload = a_tag.get("href")
+        #http get
+        fileResponse = requests.get(dwnload)
+        if fileResponse.status_code == 200:
+            localPath = r"C:/Users/ignac/Desktop/todo-django/capstone/csv_files/ultimoMes.xlsx"
+            with open(localPath, "wb") as local_file:
+                local_file.write(fileResponse.content) 
+            print(f"{localPath} descargado correctamente")
+        else:
+            print("no funciono")
+
+     
+
+
+
 
 
 
