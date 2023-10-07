@@ -1,7 +1,7 @@
 import requests
 import pandas as pd
 import os
-from openpyxl import Workbook
+import openpyxl
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin
 """
@@ -34,10 +34,56 @@ for a_tag in soup.find_all('a'):
             with open(localPath, "wb") as localFile:
                 localFile.write(fileResponse.content)
             print(f"{localPath} descargado correctamente")
+            #testing
+            workbook = openpyxl.load_workbook(localPath) 
+            chapter_name = 'Capítulo I'
+            sheet_index = 31
+            
+            if chapter_name in workbook.sheetnames:
+                chapter_sheet = workbook[chapter_name]
+                if sheet_index in chapter_sheet.sheetnames
+            
+            """
+            Iterar por todas las hojas
+            sheet= workbook.sheetnames
+            for sh in sheet:
+               print(sh) 
+            """
+            """
+            chapterName = "I Régimen de Accidentes del Trabajo y Enfermedades Profesionales"
+            
+            extractedData = []
+            
+            try:
+            
+            except KeyError:
+                print(f"La hoja {chapterName} no fue encontrada en el archivo excel ")
+            """
+           
         else:
-            print("No funciono")
-
-
+            print("Didn't work")
+           
+           
+           
+           
+           
+           
+           
+           
+           
+           
+           
+            """
+             #listas de hojas en el workbook
+            
+            sheetName = workbook.sheetnames
+            for sn in sheetName:
+                print(sn)
+                break
+            """
+           
+            
+      
      
 
 
@@ -69,34 +115,3 @@ for a_tag in soup.find_all('a'):
 
 
 
-"""
-    if response.status_code == 200:
-        # Read the CSV data into a DataFrame
-        df = pd.read_csv(pd.compat.StringIO(response.text))
-        
-        # Create an XLSX writer
-        writer = pd.ExcelWriter(output_path, engine='openpyxl')
-        writer.book = Workbook()
-        
-        # Write the DataFrame to an XLSX sheet
-        df.to_excel(writer, sheet_name='Sheet1', index=False)
-        writer.save()
-        writer.close()
-        print("CSV file successfully transformed to XLSX.")
-    else:
-        print("Failed to download the CSV file.")
-
-# Loop through Excel sheets
-for sheet_number in range(1, 41):  # Assuming 40 sheets
-    # Load the Excel sheet using openpyxl or another library
-    sheet = load_excel_sheet(sheet_number)
-    
-    # Process the sheet data as needed (e.g., extract specific data)
-    extracted_data = process_excel_sheet(sheet)
-    
-    # Define the output path for the XLSX file
-    output_path = f"output_data/sheet_{sheet_number}.xlsx"
-    
-    # Save the extracted data to an XLSX file
-    download_csv_and_transform_to_xlsx(extracted_data, output_path)
-"""
