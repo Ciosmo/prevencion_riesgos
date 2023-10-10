@@ -35,14 +35,56 @@ for a_tag in soup.find_all('a'):
                 localFile.write(fileResponse.content)
             print(f"{localPath} descargado correctamente")
             #testing
-            workbook = openpyxl.load_workbook(localPath) 
-            chapter_name = 'Capítulo I'
-            sheet_index = 31
+            workbookv2 = openpyxl.load_workbook(localPath)
+            ws = workbookv2.active
+            print(ws)
+            wantedSheet = '31'
             
+            if wantedSheet in workbookv2.sheetnames:
+                workbookv2.active = workbookv2[wantedSheet]
+                ws = workbookv2.active
+                print(f"switched to sheet: {ws.title}") 
+                
+                for row in ws.iter_rows():
+                    for cell in row:
+                        print(f"cell {cell.coordinate}: {cell.value}" )
+                print(f"additional information: this is sheet '{wantedSheet}'")
+            else:
+                print(f"sheet {wantedSheet} not found in woorkbook")
+            """
+            sheetIdx = 31
+            if sheetIdx < len(workbookv2.sheetnames):
+                sheet = workbookv2.worksheets[sheetIdx]
+                cell_value = sheet['A1'].value
+                print(f"Value in cell A1 of sheet '32': {cell_value}")
+            else:
+                print("Invalid sheet idx")
+
+            """           
+            
+            
+                        
+            """
+            workbook = openpyxl.load_workbook(localPath) 
+            SheetIdx= '31'
+            refSearch = 32
+            sheetIdx = workbook[SheetIdx] 
+            
+            for fila in sheetIdx.iter_rows(values_only=True):
+                for celda in fila:
+                    if str(celda.value) == refSearch:
+                       NameWantedSheet = fila[1].value
+                       wantedSheet = workbook[NameWantedSheet]
+                       print("Nombre de la hoja deseada: ", wantedSheet.title)
+                       break
+            """
+            
+            """
             if chapter_name in workbook.sheetnames:
                 chapter_sheet = workbook[chapter_name]
                 if sheet_index in chapter_sheet.sheetnames
-            
+            """
+
             """
             Iterar por todas las hojas
             sheet= workbook.sheetnames
