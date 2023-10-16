@@ -44,270 +44,139 @@ for a_tag in soup.find_all('a'):
                 ws = workbookv2.active
                 print(f"switched to sheet: {ws.title}") 
                 
-                categoryData={
-                      "ACCIDENTES DEL TRABAJO": {
-                        "name_cell": 'B26',
-                        "ACHS": 'C26',
-                        "MUSEG": 'D26',
-                        "IST": 'E26',
-                        "total_cell": 'F26',
+                categoryData = {
+                        "ACCIDENTES DEL TRABAJO": {
+                            "economicActivityStart": 'B9',
+                            "economicActivityEnd": 'B25',
+                            "totalColumn": 'F',
+                        },
+                        "ACCIDENTES DE TRAYECTO": {
+                            "economicActivityStart": 'B28',
+                            "economicActivityEnd": 'B45',  # Updated to 'B45'
+                            "totalColumn": 'F',
+                        },
+                        "ACCIDENTES (TRABAJO + TRAYECTO)": {
+                            "economicActivityStart": 'B48',  # Updated to 'B48'
+                            "economicActivityEnd": 'B64',
+                            "totalColumn": 'F',
+                        },
+                }
+
+                data = {}
+
+                for category, categoryInfo in categoryData.items():
+                    data[category] = {}
+                    
+                    economicActivityStart = ws[categoryInfo['economicActivityStart']]
+                    economicActivityEnd = ws[categoryInfo['economicActivityEnd']]
+                    total_column = categoryInfo['totalColumn']
+                    
+                    economicActivities = []
+                    total_values = []
+    
+                    for row in range(economicActivityStart.row, economicActivityEnd.row + 1):
+                        economic_activity_cell = ws.cell(row=row, column=economicActivityStart.column)
+                        economic_activity = economic_activity_cell.value
+                        achs_value = economic_activity_cell.offset(column=1).value
+                        museg_value = economic_activity_cell.offset(column=2).value
+                        ist_value = economic_activity_cell.offset(column=3).value
+                        total_value = ws[f"{total_column}{row}"].value  # Fetch the "Total" from the specified column
+                        
+                        economicActivities.append({
+                            "Economic Activity": economic_activity,
+                            "ACHS": achs_value,
+                            "MUSEG": museg_value,
+                            "IST": ist_value,
+                        })
+                        total_values.append(total_value)
+
+                    data[category]['Total'] = total_values  # Store all "Total" values for each economic activity
+                    data[category]['Economic Activities'] = economicActivities
+
+                for category, categoryInfo in data.items():
+                    print(category)
+                    for i, economic_activity in enumerate(categoryInfo['Economic Activities']):
+                        print(f"Economic activity: {economic_activity['Economic Activity']}")
+                        print(f"ACHS: {economic_activity['ACHS']}")
+                        print(f"MUSEG: {economic_activity['MUSEG']}")
+                        print(f"IST: {economic_activity['IST']}")
+                        print(f"Total: {categoryInfo['Total'][i]}")
+                    print()
+
+
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                """categoryData = {
+                    "ACCIDENTES DEL TRABAJO": {
                         "economicActivityStart": 'B9',
                         "economicActivityEnd": 'B25',
                     },
                     "ACCIDENTES DE TRAYECTO": {
-                        "name_cell": 'B45',
-                        "ACHS": 'C45',
-                        "MUSEG": 'D45',
-                        "IST": 'E45',
-                        "total_cell": 'F45',
                         "economicActivityStart": 'B28',
                         "economicActivityEnd": 'B44',
                     },
                     "ACCIDENTES (TRABAJO + TRAYECTO)": {
-                        "name_cell": 'B64',
-                        "ACHS": 'C64',
-                        "MUSEG": 'D64',
-                        "IST": 'E64',
-                        "total_cell": 'F64',
                         "economicActivityStart": 'B47',
                         "economicActivityEnd": 'B63',
                     },
                 }
-                
                 data = {}
                 
                 for category, categoryInfo in categoryData.items():
                     data[category] = {}
-                    data[category]['Name'] = ws[categoryInfo['name_cell']].value
-                    data[category]['Economic Activities'] = {}
+                    
+                    economicActivityStart = ws[categoryInfo['economicActivityStart']]
+                    economicActivityEnd = ws[categoryInfo['economicActivityEnd']]
 
-                    economic_activity_start = ws[categoryInfo['economicActivityStart']]
-                    economic_activity_end = ws[categoryInfo['economicActivityEnd']]
-                    for row in range(economic_activity_start.row, economic_activity_end.row + 1):
-                        economic_activity_cell = ws.cell(row=row, column=economic_activity_start.column)
+                    economicActivities = []
+                    
+                    for row in range(economicActivityStart.row, economicActivityEnd.row + 1):
+                        economic_activity_cell = ws.cell(row=row, column=economicActivityStart.column)
                         economic_activity = economic_activity_cell.value
-                        data[category]['Economic Activities'][economic_activity] = {}
-                        for key, cell_address in categoryInfo.items():
-                            if key not in ['name_cell', 'economicActivityStart', 'economicActivityEnd']:
-                                cell = cell_address.replace(categoryInfo['name_cell'], economic_activity)
-                                data[category]['Economic Activities'][economic_activity][key] = ws[cell].value
-                        """
-                        for key in categoryInfo.keys():
-                            if key not in ['name_cell', 'economicActivityStart', 'economicActivityEnd']:
-                               cell = categoryInfo[key].replace(categoryInfo['name_cell'], economic_activity)
-                               data[category]['Economic Activities'][economic_activity][key] = ws[cell].value
-                        """
+                        achs_value = economic_activity_cell.offset(column=1).value
+                        museg_value = economic_activity_cell.offset(column=2).value
+                        ist_value = economic_activity_cell.offset(column=3).value
+                        economicActivities.append({
+                            "Economic Activity": economic_activity,
+                            "ACHS": achs_value,
+                            "MUSEG": museg_value,
+                            "IST": ist_value,
+                        })
+                    total_value = sum(economic_activity['ACHS'] for economic_activity in economicActivities if economic_activity['ACHS'] is not None)
+
+                    data[category]['Total'] = total_value
+
+                    data[category]['Economic Activities'] = economicActivities
+                    
                 for category, categoryInfo in data.items():
-                    print(f"{categoryInfo['Name']}")
-                    for economicActivity, economicData in categoryInfo['Economic Activities'].items():
-                        print(f"economic activity: {economicActivity}")
-                        for key, value in economicData.items():
-                            print(f"{key}: {value}")
-                
-            """   
-            categories = [
-                "ACCIDENTES DEL TRABAJO",
-                "ACCIDENTES DE TRAYECTO",
-                "ACCIDENTES (TRABAJO + TRAYECTO)"
-            ]
-            
-            mutualities = ["ACHS", "MUSEG", "IST", "TOTAL"]
-            
-            data = {category: {mutuality: {} for mutuality in mutualities} for category in categories}
-
-            
-            
-            categoryRanges = {
-                "ACCIDENTES DEL TRABAJO": ("B9", "B25"),
-                "ACCIDENTES DE TRAYECTO": ("B28", "B44"),
-                "ACCIDENTES (TRABAJO + TRAYECTO)": ("B47", "B63"),
-                
-            }
-            mutuality_column_indices = {
-                "ACHS": 3,
-                "MUSEG": 4,
-                "IST": 5,
-                "TOTAL": 6
-            }
-            
-            for category, (start_cell, end_cell) in categoryRanges.items():
-                categoryData = data[category]
-                for mutuality in mutualities:
-                    for row in range(2, ws.max_row + 1):
-                        cellValue = ws.cell(row=row, column=mutuality_column_indices[mutuality]).value
-                        if cellValue is not None:
-                            categoryData[mutuality][ws.cell(row=row,column=1).value] = cellValue
-            
-            for category in categories:
-                print(category)
-                for mutuality in mutualities:
-                    print(mutuality)
-                    for activity, value in data[category][mutuality].items():
-                        print(f"{activity}: {value}")
-                    print()
-            """        
-            """
-            categoryPositions = {
-                    "ACCIDENTES DEL TRABAJO": "B8",
-                    "TOTAL ACCIDENTES DEL TRABAJO": "B26",
-                    "ACCIDENTES DE TRAYECTO": "B27",
-                    "TOTAL ACCIDENTES DEL TRAYECTO": "B45",
-                    "ACCIDENTES (TRABAJO + TRAYECTO)": "B46",
-                    "TOTAL TRABAJO Y TRAYECTO": "B64",
-                }
-            category_positions = {
-                    "ACCIDENTES DEL TRABAJO": ("B8", "B26"),
-                    "ACCIDENTES DE TRAYECTO": ("B27", "B45"),
-                    "TOTAL TRABAJO Y TRAYECTO": ("B46", "B64"),
-                }
-
-        
-            
-            if wantedSheet in workbookv2.sheetnames:
-                workbookv2.active = workbookv2[wantedSheet]
-                ws = workbookv2.active
-                print(f"switched to sheet: {ws.title}") 
-                
-                interestingData = []
-                currentCategory = None
-               
-                for category, (start_cell, end_cell)in category_positions.items():
-                    currentCategory = category
-                for row in ws.iter_rows(min_row=start_cell, max_row=end_cell, min_col=2, max_col=5, values_only=True):
-                    for activity, achs, museg, ist, total in row:
-                        interestingData.append((category, activity, achs, museg, ist, total ))
-                for category, activity, achs, museg, ist, total in interestingData:
-                    print(f"category {category}, actitivty {activity}, achs {achs}, museg {museg}, ist {ist}, total{total} ")    
-                print(f"additional information: this is sheet {wantedSheet}")   
-            else:
-                print(f"sheet {wantedSheet} not found in workbook")
-             
-            """           
-                        
-                        
-                        
-                        
-                        
-                        
-                        
-                        
-            """
-                        if isinstance(cellValue, (int, float)):
-                            textValue = None
-                            cellIdx = row.index(cellValue)
-                            if cellIdx > 0:
-                                textValue = row[cellIdx - 1]
-                                
-                            if textValue is not None and isinstance(textValue, str):
-                                interestingData.append((textValue, cellValue))
-                for text, numeric in interestingData:
-                    print(f"text: {text}, numeric: {numeric}")
-                
-                print(f"addditional information: this is sheet {wantedSheet}")
-                """
-            """
-            sheetIdx = 31
-            if sheetIdx < len(workbookv2.sheetnames):
-                sheet = workbookv2.worksheets[sheetIdx]
-                cell_value = sheet['A1'].value
-                print(f"Value in cell A1 of sheet '32': {cell_value}")
-            else:
-                print("Invalid sheet idx")
-
-            """           
-            
-            
-                        
-            """
-            workbook = openpyxl.load_workbook(localPath) 
-            SheetIdx= '31'
-            refSearch = 32
-            sheetIdx = workbook[SheetIdx] 
-            
-            for fila in sheetIdx.iter_rows(values_only=True):
-                for celda in fila:
-                    if str(celda.value) == refSearch:
-                       NameWantedSheet = fila[1].value
-                       wantedSheet = workbook[NameWantedSheet]
-                       print("Nombre de la hoja deseada: ", wantedSheet.title)
-                       break
-            """
-            
-            """
-            if chapter_name in workbook.sheetnames:
-                chapter_sheet = workbook[chapter_name]
-                if sheet_index in chapter_sheet.sheetnames
-            """
-
-            """
-            Iterar por todas las hojas
-            sheet= workbook.sheetnames
-            for sh in sheet:
-               print(sh) 
-            """
-            """
-            chapterName = "I Régimen de Accidentes del Trabajo y Enfermedades Profesionales"
-            
-            extractedData = []
-            
-            try:
-            
-            except KeyError:
-                print(f"La hoja {chapterName} no fue encontrada en el archivo excel ")
-            """
-           
-        else:
-            print("Didn't work")
-           
-           
-           
-           
-           
-           
-           
-           
-           
-           
-           
-            """
-             #listas de hojas en el workbook
-            
-            sheetName = workbook.sheetnames
-            for sn in sheetName:
-                print(sn)
-                break
-            """
-           
-            
-      
-     
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+                    print(category)
+                    print(f"Total: {categoryInfo['Total']}")
+                    for economic_activity in categoryInfo['Economic Activities']:
+                        print(f"Economic activity: {economic_activity['Economic Activity']}")
+                        print(f"ACHS: {economic_activity['ACHS']}")
+                        print(f"MUSEG: {economic_activity['MUSEG']}")
+                        print(f"IST: {economic_activity['IST']}")
+                    print()"""
