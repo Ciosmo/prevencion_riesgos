@@ -51,7 +51,7 @@ try:
                     categoryData = {
                             "ACCIDENTES DEL TRABAJO": {
                                 "economicActivityStart": 'B9',
-                                "economicActivityEnd": 'B25',
+                                "economicActivityEnd": 'B26',
                                 "totalColumn": 'F',
                             },
                             "ACCIDENTES DE TRAYECTO": {
@@ -108,31 +108,7 @@ try:
                         print()
 except requests.exceptions.RequestException as e:
     print(f"An error ocurrred while downloading the file: {e}") 
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
+    
     """
                 categoryData = {
                     "ACCIDENTES DEL TRABAJO": {
