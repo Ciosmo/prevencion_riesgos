@@ -81,10 +81,11 @@ class Command(BaseCommand):
                                 for row in range(economicActivityStart.row, economicActivityEnd.row + 1):
                                     economic_activity_cell = ws.cell(row=row, column=economicActivityStart.column)
                                     economic_activity = economic_activity_cell.value
-                                    achs_value = economic_activity_cell.offset(column=1).value
-                                    museg_value = economic_activity_cell.offset(column=2).value
-                                    ist_value = economic_activity_cell.offset(column=3).value
+                                    achs_value = ws.cell(row=row, column=economicActivityStart.column + 1).value
+                                    museg_value = ws.cell(row=row, column=economicActivityStart.column + 2).value
+                                    ist_value = ws.cell(row=row, column=economicActivityStart.column + 3).value
                                     total_value = ws[f"{total_column}{row}"].value  # Fetch the "Total" from the specified column
+
                                     
                                     economicActivities.append({
                                         "Economic Activity": economic_activity,
@@ -105,11 +106,12 @@ class Command(BaseCommand):
                                     economic_activity_instance = EconomicActivity(
                                         category=category_instance,
                                         name=economic_activity['Economic Activity'],
-                                        achs=achs_value,
-                                        museg=museg_value,
-                                        ist=ist_value,
+                                        achs=economic_activity['ACHS'],
+                                        museg=economic_activity['MUSEG'],
+                                        ist=economic_activity['IST'],
                                         total=total_value
                                     )
                                     economic_activity_instance.save()
+                                    
         except requests.exceptions.RequestException as e:
             print(f"An error ocurrred while downloading the file: {e}")   
