@@ -39,7 +39,7 @@ try:
                 print(f"{localPath} descargado correctamente")
                 #testing
                 workbookv2 = openpyxl.load_workbook(localPath)
-                sheetsToProcess = ['31', '29']
+                sheetsToProcess = ['31', '29', '38']
                 for wantedSheet in sheetsToProcess:
                     if wantedSheet in workbookv2.sheetnames:
                         ws = workbookv2[wantedSheet]
@@ -167,60 +167,72 @@ try:
                                     print(f"2021: {mutualInicio['2021']}")
                                     print(f"2022: {mutualInicio['2022']}")
                                 print()
+                        if wantedSheet == '38':
+                            print(f"switched to sheet: {ws.title}")
+                            
+                            categoryData = {
+                                "ACCIDENTES DEL TRABAJO":{
+                                    "economicActivityStart": 'B8',
+                                    "economicActivityEnd": 'B24',
+                                    "totalColumn": 'G'
+                                },
+                                "ACCIDENTES DE TRAYECTO": {
+                                    "economicActivityStart": 'B26',
+                                    "economicActivityEnd":'B42',
+                                    "totalColumn": 'G'
+                                },
+                                "ACCIDENTES (TRABAJO + TRAYECTO)":{
+                                    "economicActivityStart":'B44',
+                                    "economicActivityEnd": 'B60',
+                                    "totalColumn": 'G'
+                                }       
+                            }
+                             
+                            data = {}
+                            
+                            for category, categoryInfo in categoryData.items():
+                                data[category] = {}
+                                
+                                economicActivityStart = ws[categoryInfo['economicActivityStart']]
+                                economicActivityEnd = ws[categoryInfo['economicActivityEnd']]
+                                totalColumn = categoryInfo['totalColumn']  
+                                
+                                economicActivities = []
+                                totalValues = []
+                                
+                                for row in range (economicActivityStart.row, economicActivityEnd.row + 1):
+                                    economicActivityCell = ws.cell(row=row, column=economicActivityStart.column)
+                                    economicActivity = economicActivityCell.value
+                                    
+                                    achsValue = economicActivityCell.offset(column=1).value
+                                    musegValue = economicActivityCell.offset(column=2).value
+                                    istValue = economicActivityCell.offset(column=3).value
+                                    islValue = economicActivityCell.offset(column=4).value
+                                    totalValue = ws[f"{totalColumn}{row}"].value
+                                    
+                                    economicActivities.append({
+                                        "Economic Activity": economicActivity,
+                                        "ACHS": achsValue,
+                                        "MUSEG": musegValue,
+                                        "IST": istValue,
+                                        "ISL": islValue
+                                    })
+                                    totalValues.append(totalValue)
+                                    
+                                data[category]['Total'] = totalValues
+                                data[category]['Economic Activities'] = economicActivities
+                            for category, categoryInfo in data.items():
+                                print(category)
+                                for i, economicActivity in enumerate(categoryInfo['Economic Activities']):
+                                    print(f"Economic activity:{economicActivity['Economic Activity']}")
+                                    print(f"ACHS: {economicActivity['ACHS']}")
+                                    print(f"MUSEG: {economicActivity['MUSEG']}")
+                                    print(f"IST: {economicActivity['IST']}")
+                                    print(f"ISL: {economicActivity['ISL']}")
+                                    print(f"Total: {categoryInfo['Total'][i]}")
+                                print()
                                       
 except requests.exceptions.RequestException as e:
     print(f"An error ocurrred while downloading the file: {e}") 
     
-    """
-                categoryData = {
-                    "ACCIDENTES DEL TRABAJO": {
-                        "economicActivityStart": 'B9',
-                        "economicActivityEnd": 'B25',
-                    },
-                    "ACCIDENTES DE TRAYECTO": {
-                        "economicActivityStart": 'B28',
-                        "economicActivityEnd": 'B44',
-                    },
-                    "ACCIDENTES (TRABAJO + TRAYECTO)": {
-                        "economicActivityStart": 'B47',
-                        "economicActivityEnd": 'B63',
-                    },
-                }
-                data = {}
-                
-                for category, categoryInfo in categoryData.items():
-                    data[category] = {}
-                    
-                    economicActivityStart = ws[categoryInfo['economicActivityStart']]
-                    economicActivityEnd = ws[categoryInfo['economicActivityEnd']]
-
-                    economicActivities = []
-                    
-                    for row in range(economicActivityStart.row, economicActivityEnd.row + 1):
-                        economic_activity_cell = ws.cell(row=row, column=economicActivityStart.column)
-                        economic_activity = economic_activity_cell.value
-                        achs_value = economic_activity_cell.offset(column=1).value
-                        museg_value = economic_activity_cell.offset(column=2).value
-                        ist_value = economic_activity_cell.offset(column=3).value
-                        economicActivities.append({
-                            "Economic Activity": economic_activity,
-                            "ACHS": achs_value,
-                            "MUSEG": museg_value,
-                            "IST": ist_value,
-                        })
-                    total_value = sum(economic_activity['ACHS'] for economic_activity in economicActivities if economic_activity['ACHS'] is not None)
-
-                    data[category]['Total'] = total_value
-
-                    data[category]['Economic Activities'] = economicActivities
-                    
-                for category, categoryInfo in data.items():
-                    print(category)
-                    print(f"Total: {categoryInfo['Total']}")
-                    for economic_activity in categoryInfo['Economic Activities']:
-                        print(f"Economic activity: {economic_activity['Economic Activity']}")
-                        print(f"ACHS: {economic_activity['ACHS']}")
-                        print(f"MUSEG: {economic_activity['MUSEG']}")
-                        print(f"IST: {economic_activity['IST']}")
-                    print()
-    """
+    
