@@ -107,64 +107,67 @@ try:
                                     print(f"Total: {categoryInfo['Total'][i]}")
                                 print()
                         if wantedSheet == '29':
-                                    print(f"switched to sheet: {ws.title}")
-                                    categoryData = {
-                                        "ACCIDENTES DEL TRABAJO": {
-                                            "mutualInicio": "B8",
-                                            "mutualFinal": "B11",
-                                            "yearsRow": 6,
-                                            "yearsColumn": ["C", "D", "E", "F", "G"],
-                                        },
-                                        "ACCIDENTES DE TRAYECTO": {
-                                            "mutualInicio": "B13",
-                                            "mutualFinal": "B15",
-                                            "yearsRow": 6,
-                                            "yearsColumn": ["C", "D", "E", "F", "G"],
-                                        },
-                                        "POR ACCIDENTES (TRABAJO + TRAYECTO)": {
-                                            "mutualInicio": "B18",
-                                            "mutualFinal": "B20",
-                                            "yearsRow": 6,
-                                            "yearsColumn": ["C", "D", "E", "F", "G"],
-                                        }
-                                    }
-                                    data = {}
+                            print(f"switched to sheet: {ws.title}")
+                            categoryData = {
+                                "ACCIDENTES DEL TRABAJO": {
+                                    "mutualInicio": "B8",
+                                    "mutualFinal": "B11",
+               
+                                },
+                                "ACCIDENTES DE TRAYECTO": {
+                                    "mutualInicio": "B13",
+                                    "mutualFinal": "B16",
+                                   
+                                },
+                                "POR ACCIDENTES (TRABAJO + TRAYECTO)": {
+                                    "mutualInicio": "B18",
+                                    "mutualFinal": "B21",
+                                
+                                }
+                            }
+                            data = {}
 
-                                    for category, categoryInfo in categoryData.items():
-                                        data[category] = {}
-                                        mutualInicioCell = ws[categoryInfo["mutualInicio"]]
-                                        mutualFinalCell = ws[categoryInfo["mutualFinal"]]
-                                        yearsRow = categoryInfo["yearsRow"]
-                                        yearsColumn = categoryInfo["yearsColumn"]
-                                        
-                                        mutuales = []
-        
-                                        for row in range(mutualInicioCell.row, mutualFinalCell.row + 1):
-                                            mutualInicioCell = ws.cell(row=row, column=mutualInicioCell.column)
-                                            mutualInicio = mutualInicioCell.value
-                                            
-                                            yearValues = {}
-                                            percentageValues = {}
+                            for category, categoryInfo in categoryData.items():
+                                data[category] = {}
+                                
+                                mutualInicioCell = ws[categoryInfo["mutualInicio"]]
+                                mutualFinalCell = ws[categoryInfo["mutualFinal"]]
+                                
+                    
+                                
+                                mutuales = []
+   
+                                for row in range(mutualInicioCell.row, mutualFinalCell.row + 1):
+                                    mutualInicioCell = ws.cell(row=row, column=mutualInicioCell.column)
+                                    mutualInicio = mutualInicioCell.value
+                                    
+                                    anio2018 = mutualInicioCell.offset(column=1).value
+                                    anio2019 = mutualInicioCell.offset(column=2).value
+                                    anio2020 = mutualInicioCell.offset(column=3).value
+                                    anio2021 = mutualInicioCell.offset(column=4).value
+                                    anio2022 = mutualInicioCell.offset(column=5).value
 
-                                            for col in yearsColumn:
-                                                yearValues[col] = ws[f"{col}{yearsRow}"].value 
-                                                percentageValues[col] = ws[f"{col}{row}"].value
-                                            
-                                            mutuales.append({
-                                                "Mutualidades": mutualInicio,
-                                                "Year values": yearValues,
-                                                "Percentage values": percentageValues
-                                            })
-            
-                                        data[category]["Mutuales"] = mutuales
-
-                                    # Print the extracted data
-                                    for category, categoryInfo in data.items():
-                                        print(f"Categoria: {category}")
-                                        for mutual in categoryInfo["Mutuales"]:
-                                            print(f"Mutualidades: {mutual['Mutualidades']}")
-                                            print(f"Year values: {mutual['Year values']}")
-                                            print(f"Percentage values: {mutual['Percentage values']}")     
+                                    mutuales.append({
+                                        "Mutualidades": mutualInicio,
+                                        "2018": anio2018,
+                                        "2019": anio2019,
+                                        "2020": anio2020,
+                                        "2021": anio2021,
+                                        "2022": anio2022
+                                    })
+                                data[category]['Mutuales'] = mutuales
+                                    
+                            for category, categoryInfo in data.items():
+                                print(category)
+                                for i, mutualInicio in enumerate(categoryInfo['Mutuales']):
+                                    print(f"mutuales: {mutualInicio['Mutualidades']}")
+                                    print(f"2018: {mutualInicio['2018']}")
+                                    print(f"2019: {mutualInicio['2019']}")
+                                    print(f"2020: {mutualInicio['2020']}")
+                                    print(f"2021: {mutualInicio['2021']}")
+                                    print(f"2022: {mutualInicio['2022']}")
+                                print()
+                                      
 except requests.exceptions.RequestException as e:
     print(f"An error ocurrred while downloading the file: {e}") 
     
