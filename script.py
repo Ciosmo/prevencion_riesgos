@@ -39,7 +39,7 @@ try:
                 print(f"{localPath} descargado correctamente")
                 #testing
                 workbookv2 = openpyxl.load_workbook(localPath)
-                sheetsToProcess = ['31', '29', '38']
+                sheetsToProcess = ['31', '29', '38', '39']
                 for wantedSheet in sheetsToProcess:
                     if wantedSheet in workbookv2.sheetnames:
                         ws = workbookv2[wantedSheet]
@@ -231,7 +231,7 @@ try:
                                     print(f"ISL: {economicActivity['ISL']}")
                                     print(f"Total: {categoryInfo['Total'][i]}")
                                 print()
-                                      
+                        
 except requests.exceptions.RequestException as e:
     print(f"An error ocurrred while downloading the file: {e}") 
     
