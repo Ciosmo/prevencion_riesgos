@@ -231,7 +231,64 @@ try:
                                     print(f"ISL: {economicActivity['ISL']}")
                                     print(f"Total: {categoryInfo['Total'][i]}")
                                 print()
-                        
+
+                        if wantedSheet == '39':
+                            print(f"switched to sheet: {ws.title}")
+                            categoryData = {
+                                "ACCIDENTES DEL TRABAJO": {
+                                    "economicActivityStart": 'B8',
+                                    "economicActivityEnd": 'B24',
+                                    "totalColumn": 'E'
+                                },
+                                "ACCIDENTES DEL TRAYECTO": {
+                                    "economicActivityStart": 'B26',
+                                    "economicActivityEnd": 'B42',
+                                    "totalColumn": 'E'
+                                },
+                                "ACCIDENTES (TRABAJO + TRAYECTO)":{
+                                    "economicActivityStart": 'B44',
+                                    "economicActivityEnd": 'B60',
+                                    "totalColumn": 'E'
+                                }
+                            }
+                            
+                            data = {}
+                            
+                            for category, categoryInfo in categoryData.items():
+                                
+                                data[category] = {}
+                                
+                                economicActivityStart = ws[categoryInfo['economicActivityStart']]
+                                economicActivityEnd = ws[categoryInfo['economicActivityEnd']]
+                                totalColumn = categoryInfo['totalColumn']
+                                economicActivities = []
+                                totalValues = []
+                                
+                                for row in range (economicActivityStart.row, economicActivityEnd.row+1):
+                                    economicActivityCell = ws.cell(row=row, column=economicActivityStart.column)
+                                    economicActivity = economicActivityCell.value
+                                    
+                                    menValues = economicActivityCell.offset(column=1).value
+                                    womenValue = economicActivityCell.offset(column=2).value
+                                    totalValue = ws[f"{totalColumn}{row}"].value
+                                    
+                                    economicActivities.append({
+                                        "Economic Activity": economicActivity,
+                                        "Men": menValues,
+                                        "Women": womenValue
+                                    })
+                                    totalValues.append(totalValue)
+                                data[category]['Total'] = totalValues
+                                data[category]['Economic Activities'] = economicActivities
+                            for category, categoryInfo in data.items():
+                                
+                                for i, economicActivity in enumerate(categoryInfo['Economic Activities']):
+                                    print(f"Economic Activity: {economicActivity['Economic Activity']}")
+                                    print(f"Men: {economicActivity['Men']}")
+                                    print(f"Women: {economicActivity['Women']}")
+                                    print(f"Total: {categoryInfo['Total'][i]}")
+                                    
+                                    
 except requests.exceptions.RequestException as e:
     print(f"An error ocurrred while downloading the file: {e}") 
     
