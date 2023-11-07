@@ -6,10 +6,25 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="{% static 'main.css' %}">
+    <link rel="stylesheet" href="{% static 'a.css' %}">
     <title>Mi casita</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 </head>
 <body>
-    <h1>Prueba</h1>
+
+<!-- Barra de tareas -->
+<div class="navbar">
+    <a href="/home">Inicio</a>
+    <a href="/grafico/">Graficos</a>
+    <div class="logo">
+        <img src="{% static 'logoDuoc.png' %}" class="Duoc">
+    </div>
+</div>
+
+<!-- Contenido -->
+<div class="content">
+    <div id="plotly-graph">{{ plotly_div|safe }}</div>
+</div>
+
 </body>
 </html>
