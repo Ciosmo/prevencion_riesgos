@@ -40,7 +40,7 @@ try:
                 print(f"{localPath} descargado correctamente")
                 #testing
                 workbookv2 = openpyxl.load_workbook(localPath)
-                sheetsToProcess =  ['31', '29', '38', '39']
+                sheetsToProcess =  ['31', '29', '38', '39', '28']
                 for wantedSheet in sheetsToProcess:
                     if wantedSheet in workbookv2.sheetnames:
                         ws = workbookv2[wantedSheet]
@@ -237,7 +237,9 @@ try:
                                     print(f"ISL: {economicActivity['ISL']}")
                                     print(f"Total: {categoryInfo['Total'][i]}")
                                 print()
+
                         """            
+                        """
                         if wantedSheet == '39':
                             print(f"switched to sheet: {ws.title}")
                             categoryData = {
@@ -293,11 +295,77 @@ try:
                                     print(f"Men: {economicActivity['Men']}")
                                     print(f"Women: {economicActivity['Women']}")
                                     print(f"Total: {categoryInfo['Total'][i]}")
+                        """    
+                        if wantedSheet == '28':
+                            categoryData = {
+                                "ACCIDENTES DEL TRABAJO": {
+                                    "economicActivityStart": 'B9',
+                                    "economicActivityEnd": 'B26',
+                                    "totalColumn": 'F',
+                                },
+                                "ACCIDENTES DEL TRAYECTO": {
+                                    "economicActivityStart": 'B28',
+                                    "economicActivityEnd": 'B45',
+                                    "totalColumn": 'F',
+                                },
+                                "TASA ACCIDENTABILIDAD": {
+                                    "economicActivityStart": 'B47',
+                                    "economicActivityEnd": 'B64',
+                                    "totalColumn": 'F',
+                                },
+                            }
+                            
+                            data = {}
+                            
+                            for category, categoryInfo in categoryData.items():
+                                data[category] = {}
+                                
+                                economicActivityStart = ws[categoryInfo['economicActivityStart']]
+                                economicActivityEnd = ws[categoryInfo['economicActivityEnd']]
+                                totalColumn = categoryInfo['totalColumn']
+                                
+                                economicActivities = []
+                                totalValues = []
+                                
+                                for row in range(economicActivityStart.row, economicActivityEnd.row + 1):
+                                    economicActivityCell = ws.cell(row=row, column=economicActivityStart.column)
+                                    economicActivity = economicActivityCell.value
+                                    
+                                    achsValue = economicActivityCell.offset(column=1).value
+                                    musegValue = economicActivityCell.offset(column=2).value
+                                    istValue = economicActivityCell.offset(column=3).value
+                                    totalValue = ws[f"{totalColumn}{row}"].value
+                                    
+                                    achsValue = round(achsValue * 100, 1)
+                                    musegValue = round(musegValue * 100, 1)
+                                    istValue = round(istValue * 100, 1)
+                                    totalValue = round(totalValue * 100, 1)
                                     
                                     
+                                    
+                                    economicActivities.append({
+                                        "Economic Activity": economicActivity,
+                                        "ACHS": achsValue,
+                                        "MUSEG": musegValue,
+                                        "IST": istValue,
+                                    })
+                                    totalValues.append(totalValue)
                                 
-                                
-                                
+                                data[category]['Total'] = totalValues
+                                data[category]['Economic Activities'] = economicActivities
+                            
+                            for category, categoryInfo in data.items():
+                                print(category)
+                                for i, economicActivity in enumerate(categoryInfo['Economic Activities']):
+                                    print(f"Economic activity: {economicActivity['Economic Activity']}")
+                                    print(f"ACHS: {economicActivity['ACHS']}%")
+                                    print(f"MUSEG: {economicActivity['MUSEG']}%")
+                                    print(f"IST: {economicActivity['IST']}%")
+                                    print(f"Total: {categoryInfo['Total'][i]}%")
+                                print()
+
+                                                            
+
                                 
                             
 except requests.exceptions.RequestException as e:
