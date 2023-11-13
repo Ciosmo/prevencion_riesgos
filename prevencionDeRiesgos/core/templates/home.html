@@ -15,15 +15,23 @@
 
 <!-- Barra de tareas -->
 <div class="navbar">
-    <a href="/home">Inicio</a>
-    <a href="/grafico/">Graficos</a>
     <div class="logo">
         <img src="{% static 'logoDuoc.png' %}" class="Duoc">
     </div>
+    <a href="/home">Inicio</a>
+    <a href="/grafico/">Graficos</a>
 </div>
 
 <!-- Contenido -->
 <div class="content">
+
+    <!-- Botones para cambiar la categoría -->
+    <form method="GET" action="{% url 'grafico' %}">
+        <button type="submit" name="categoria_id" value="1" class="btn btn-primary">Accidente de Trabajo</button>
+        <button type="submit" name="categoria_id" value="2" class="btn btn-primary">Accidente de Trayecto</button>
+        <button type="submit" name="categoria_id" value="3" class="btn btn-primary">Categoría 3</button>
+    </form>
+
     <div>{{ plotly_div1|safe }}</div>
 
     <div>{{ plotly_div2|safe }}</div>
