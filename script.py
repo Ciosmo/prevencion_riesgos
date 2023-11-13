@@ -20,6 +20,7 @@ response = requests.get(web_page_url)
 
 soup = BeautifulSoup(response.text, 'lxml') 
 
+
 downloadDir = os.path.join(os.getcwd(), "downloadedFiles")
 os.makedirs(downloadDir, exist_ok=True)
 try:
