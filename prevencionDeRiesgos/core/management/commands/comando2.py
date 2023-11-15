@@ -123,7 +123,7 @@ class Command(BaseCommand):
                                             "mutualFinal": "B16",
                                         
                                         },
-                                        "POR ACCIDENTES (TRABAJO + TRAYECTO)": {
+                                        "ACCIDENTES (TRABAJO + TRAYECTO)": {
                                             "mutualInicio": "B18",
                                             "mutualFinal": "B21",
                                         
@@ -254,7 +254,7 @@ class Command(BaseCommand):
                                             "economicActivityEnd": 'B24',
                                             "totalColumn": 'E'
                                         },
-                                        "ACCIDENTES DEL TRAYECTO": {
+                                        "ACCIDENTES DE TRAYECTO": {
                                             "economicActivityStart": 'B26',
                                             "economicActivityEnd": 'B42',
                                             "totalColumn": 'E'
