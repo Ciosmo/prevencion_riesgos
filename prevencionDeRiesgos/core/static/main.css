@@ -89,10 +89,7 @@ body {
 }
 
 .content {
-    padding-top: 100px;
-    padding-bottom: 100px;
-    padding-left: 30px;
-    padding-right: 30px;
+    padding: 50px;
     flex: 1;
 }
 
@@ -100,6 +97,58 @@ body {
     text-align: center;
     margin: 225px;
     font-size: x-large;
+}
+
+.accordion{
+    margin: 50px auto;
+    width: 1300px;
+}
+
+.accordion li{
+    list-style: none;
+    width: 100%;
+    margin: 20px;
+    padding: 10px;
+    border-radius: 8px;
+    box-shadow: 6px 6px 10px -1px rgb(0, 0, 0, 0.15),
+                -6px -6px 10px -1px rgb(225, 225, 225, 0.7);
+}
+
+.accordion li label{
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    font-size: 18px;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+label::before{
+    content: '+';
+    margin-right: 10px;
+    font-size: 24px;
+    font-weight: 600;
+}
+
+input[type="checkbox"]{
+    display: none;
+}
+
+.accordion .content{
+    padding: 0 10px;
+    line-height: 26px;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.5s, padding 0.5s;
+}
+
+.accordion input[type="checkbox"]:checked + label + .content{
+    max-height: 500px;
+    padding: 10px 10px 20px;
+}
+
+.accordion input[type="checkbox"]:checked + label::before{
+    content: '-';
 }
 
 .pie-pagina{
@@ -160,17 +209,17 @@ body {
 /* Estilos para pantallas más pequeñas (responsive) */
 @media screen and (max-width: 768px) {
     .navbar a {
-        padding: 10px 25px;
+        padding: 10px 20px;
         font-size: 15px;
         color: white;
         text-align: center;
         text-decoration: none;
+        display: flex;
+        align-items: center;
     }
 
     .logo img {
         display: none;
-        width: 100px;
-        height: auto;
     }
 
     .content p{
@@ -179,6 +228,26 @@ body {
         text-align: center;
         margin: 30px;
         font-size: large;
+    }
+
+    .accordion{
+        margin: 5px auto;
+        width: 500px;
+    }
+
+    .accordion li{
+        list-style: none;
+        width: 90%;
+        margin: 10px;
+        padding: 10px;
+    }
+    
+    .accordion li label{
+        display: flex;
+        align-items: center;
+        padding: 10px;
+        font-size: 15px;
+        cursor: pointer;
     }
 
     .btn{
