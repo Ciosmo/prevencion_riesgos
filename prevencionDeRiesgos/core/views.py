@@ -1,12 +1,20 @@
-from django.shortcuts import render
 from core.models import EconomicActivity, Mutualidad, Tasa_Eco_Act, Sexo
+from django.contrib.auth.models import User
+from django.shortcuts import render
+from django.contrib import messages
+from django.contrib.auth import get_user_model
+
+from django.shortcuts import redirect, render
 import plotly.express as px
+
 from plotly.offline import plot
 import pandas as pd
 
 # Create your views here.
+
 def home(request):
     return render(request, 'home.html')
+
 
 def graficoMut(request, categoria_id=1):
     # Obtener los datos de tu base de datos

@@ -19,9 +19,11 @@
             <li><a href="/home">Inicio</a></li>
             <li><a href="/graficoMut">Graficos</a></li>
             <li><a href="#">Cerrar sesion</a></li>
+            <li><button type=submit><a href="{% url 'signup' %}">Signup</a></button></li>
+            <li><button type=submit> <a href="{% url 'login' %}">Login</a></button></li>
+             <li><button type=submit><a href="{% url 'logout' %}">SignOut</a> </button></li>
         </ul>
     </nav>
-<!--<a href="#" class="btn"><button>ChatGPT</button></a>-->
     <div class="logo">
         <img src="{% static 'riesgo.png' %}" alt="Logo">
     </div>
@@ -30,6 +32,9 @@
 <!-- Contenido -->
 <div class="content">
     <p>Bienvenido a la pagina donde podra ver informacion proveniente de la SUSESO, en donde podra visualizar los dato en graficos interactivos </p>
+
+
+
 </div>
 
 <footer class="pie-pagina">
