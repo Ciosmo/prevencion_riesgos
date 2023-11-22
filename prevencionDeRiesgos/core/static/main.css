@@ -1,98 +1,135 @@
 *{
     box-sizing: border-box;
+    text-decoration: none;
+    list-style: none;
     margin: 0;
     padding: 0;
 }
 
-.header{
-    background-color: #333;
+body {
     display: flex;
-    justify-content: flex-end;
-    align-items: center;
-    height: 85px;
-    padding: 5px 10%;
+    flex-direction: column;
+    min-height: 100vh;
 }
 
-.header .logo{
+.logo{
     cursor: pointer;
-    order: 3;
-    margin-left: auto;
+    float: right;
+    margin-right: 30px;
 }
 
-.header .logo img{
-    height: 70px;
+.logo img{
+    height: 65px;
     width: auto;
     transition: all 0.3s;
 }
 
-.header .logo img:hover{
+.logo img:hover{
     transform: scale(1.2);
 }
 
-.header nav{
-    order: 1;
+nav{
+    background-color: #333;
+    height: 85px;
+    width: 100%;
 }
 
-.header .nav-links{
-    list-style: none;
+nav ul li{
+    float: left;
+    margin-left: 30px;
 }
 
-.header .nav-links li{
-    display: inline-block;
-    padding: 10px 30px;
-}
-
-.header .nav-links li:nth-child(1){
-    padding: 0 20px 0 0;
-}
-
-.header .nav-links li:hover{
-    transform: scale(1.1);
-}
-
-.header .nav-links a{
-    font-size: 900;
+nav ul li a{
     color: white;
+    font-size: 17px;
     text-decoration: none;
 }
 
-.header .nav-links li a:hover{
-    color: yellow;
-}
-
-.header .btn{
-    order: 2;
-}
-
-.header .btn button{
-    margin-left: 20px;
-    font-weight: 900;
-    color: white;
-    padding: 9px 25px;
-    background: rgb(3, 176, 98);
-    border: none;
-    border-radius: 50px;
-    cursor: pointer;
-    transition: all 0.3s ease 0s;
-}
-
-.header .btn button:hover{
-    background-color: rgb(0, 194, 107);
-    color: white;
+nav ul li:hover{
     transform: scale(1.1);
 }
 
+nav ul li a:hover{
+    color: yellow;
+}
+
+.checkbtn{
+    font-size: 30px;
+    color: white;
+    float: left;
+    line-height: 80px;
+    margin-left: 10px;
+    cursor: pointer;
+    display: none;
+}
+
+#check{
+    display: none;
+}
+
+
+
 .content {
-    padding-top: 100px;
-    padding-bottom: 100px;
-    padding-left: 30px;
-    padding-right: 30px;
+    padding: 50px;
+    flex: 1;
 }
 
 .content p{
     text-align: center;
     margin: 225px;
     font-size: x-large;
+}
+
+.accordion{
+    margin: 50px auto;
+    width: 1300px;
+}
+
+.accordion li{
+    list-style: none;
+    width: 100%;
+    margin: 20px;
+    padding: 10px;
+    border-radius: 8px;
+    box-shadow: 6px 6px 10px -1px rgb(0, 0, 0, 0.15),
+                -6px -6px 10px -1px rgb(225, 225, 225, 0.7);
+}
+
+.accordion li label{
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    font-size: 18px;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.accordion label::before{
+    content: '+';
+    margin-right: 10px;
+    font-size: 24px;
+    font-weight: 600;
+}
+
+.accordion input[type="checkbox"]{
+    display: none;
+}
+
+.accordion .content{
+    padding: 0 10px;
+    line-height: 26px;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.5s, padding 0.5s;
+}
+
+.accordion input[type="checkbox"]:checked + label + .content{
+    max-height: 500px;
+    padding: 10px 10px 20px;
+}
+
+.accordion input[type="checkbox"]:checked + label::before{
+    content: '-';
 }
 
 .pie-pagina{
@@ -151,27 +188,44 @@
 
 
 /* Estilos para pantallas más pequeñas (responsive) */
-@media screen and (max-width: 768px) {
-    .navbar a {
-        padding: 10px 25px;
-        font-size: 15px;
-        color: white;
-        text-align: center;
-        text-decoration: none;
-    }
+@media screen and (max-width: 952px) {
 
     .logo img {
         display: none;
-        width: 100px;
-        height: auto;
     }
 
     .content p{
         display: flex;
         justify-content: center;
         text-align: center;
-        margin: 30px;
+        margin: 40px;
         font-size: large;
+    }
+
+    .content {
+        padding: 0px;
+        margin-top: 10px;
+    }
+
+    .accordion{
+        margin: 10px auto;
+        width: 400px;
+        
+    }
+
+    .accordion li{
+        list-style: none;
+        width: 90%;
+        margin: 10px;
+        padding: 0px;
+    }
+    
+    .accordion li label{
+        display: flex;
+        align-items: center;
+        padding: 10px;
+        font-size: 15px;
+        cursor: pointer;
     }
 
     .btn{
@@ -183,13 +237,20 @@
     }
 
     .pie-pagina .grupo-1{
-        width: 90%;
+        width: 100%;
         grid-template-columns: repeat(1, 1fr);
         grid-gap: 30px;
         padding: 35px 0px;
+        font-size: small;
     }
 
     .pie-pagina .grupo-1 .social a:hover{
         color: aqua;
+    }
+
+    .pie-pagina .grupo-2{
+        padding: 5px;
+        font-size: small;
+        width: 100%;
     }
 }
