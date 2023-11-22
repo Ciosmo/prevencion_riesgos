@@ -77,9 +77,9 @@ def grafico(request, categoria_id=1):
 
     tea1 = px.bar(df_tasa_eco_act, x='name', y='achs', title=f'Tasa de accidentes por Actividad Económica', color='Categoria')
 
-    tea2 = px.bar(df_tasa_eco_act, x='name', y='museg', title=f'Cantidad de accidentes por Actividad Económica', color='Categoria')
+    tea2 = px.bar(df_tasa_eco_act, x='name', y='museg', title=f'Tasa de accidentes por Actividad Económica', color='Categoria')
 
-    tea3 = px.bar(df_tasa_eco_act, x='name', y='ist', title=f'Cantidad de accidentes por Actividad Económica', color='Categoria')
+    tea3 = px.bar(df_tasa_eco_act, x='name', y='ist', title=f'Tasa de accidentes por Actividad Económica', color='Categoria')
 
     #Sexo
 
