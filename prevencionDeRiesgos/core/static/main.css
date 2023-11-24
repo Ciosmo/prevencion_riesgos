@@ -34,9 +34,15 @@ nav{
     width: 100%;
 }
 
-nav ul li{
+nav ul{
     float: left;
     margin-left: 30px;
+}
+
+nav ul li{
+    display: inline-block;
+    line-height: 8opx;
+    margin: 0 10px;
 }
 
 nav ul li a{
@@ -58,7 +64,7 @@ nav ul li a:hover{
     color: white;
     float: left;
     line-height: 80px;
-    margin-left: 10px;
+    margin-left: 30px;
     cursor: pointer;
     display: none;
 }
@@ -188,10 +194,50 @@ nav ul li a:hover{
 
 
 /* Estilos para pantallas más pequeñas (responsive) */
-@media screen and (max-width: 952px) {
+@media screen and (max-width: 750px) {
 
     .logo img {
-        display: none;
+        height: 50px;
+        width: auto;
+        padding-left: 50px;
+    }
+
+    nav ul li a{
+        font-size: 20px;
+        color: white
+    }
+
+    .checkbtn{
+        display: block;
+    }
+
+    nav{
+        width: 100%;
+    }
+
+    nav ul{
+        position: fixed;
+        width: 70%;
+        height: 100vh;
+        background: rgb(85, 84, 84);
+        top: 80px;
+        left: -115%;
+        text-align: center;
+        transition: all .5s;
+    }
+
+    nav ul li{
+        display: block;
+        width: 70%;
+        margin: 20px;
+        background-color: gray;
+        padding: 10px;
+        border-radius: 8px;
+        justify-content: center;
+    }
+
+    #check:checked ~ ul{
+        left: -10%;
     }
 
     .content p{
@@ -203,9 +249,12 @@ nav ul li a:hover{
     }
 
     .content {
-        padding: 0px;
-        margin-top: 10px;
+        padding: 10px;
+        padding-top: 20px;
+        padding-bottom: 20px;
+        flex: 1;
     }
+
 
     .accordion{
         margin: 10px auto;
@@ -213,9 +262,16 @@ nav ul li a:hover{
         
     }
 
-    .accordion li{
+    .accordion ul{
         list-style: none;
-        width: 90%;
+        width: 70%;
+        margin: 10px;
+        padding: 0px;
+    }
+
+    .accordion ul li{
+        list-style: none;
+        width: 70%;
         margin: 10px;
         padding: 0px;
     }
@@ -249,7 +305,7 @@ nav ul li a:hover{
     }
 
     .pie-pagina .grupo-2{
-        padding: 5px;
+        padding: 10px;
         font-size: small;
         width: 100%;
     }

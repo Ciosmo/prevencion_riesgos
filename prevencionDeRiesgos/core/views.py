@@ -15,7 +15,7 @@ import pandas as pd
 def home(request):
     return render(request, 'home.html')
 
-def graficoMut(request, categoria_id=1):
+def grafico(request, categoria_id=1):
     # Obtener los datos de tu base de datos
     datos_eco = EconomicActivity.objects.all()
     datos_mut = Mutualidad.objects.all()

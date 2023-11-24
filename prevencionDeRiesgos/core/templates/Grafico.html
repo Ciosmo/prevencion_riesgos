@@ -24,7 +24,7 @@
         <ul class="nav-links">
             <li><a href="/home">Inicio</a></li>
             <li><a href="#">Graficos</a></li>
-            <li><a href="#">Cerrar sesion</a></li>
+            <li><a href="{% url 'logout' %}">Cerrar sesion</a></li>
         </ul>
         <div class="logo">
             <img src="{% static 'riesgo.png' %}" alt="Logo">
@@ -124,7 +124,6 @@
         </div>
         <div class="box">
             <h2>Conocenos</h2>
-            <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Porro, eius.</p>
             <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Porro, eius.</p>
         </div>
         <div class="box">
