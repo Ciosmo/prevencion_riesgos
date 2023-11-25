@@ -1,0 +1,170 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{% static 'main.css' %}">
+    <title>Datos Prevencion de Riesgos</title>
+    <script src="https://kit.fontawesome.com/827f93132a.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+
+<!-- Barra de tareas -->
+<div class="header">
+    <nav class="navbar">
+        <input type="checkbox" id="check">
+        <label for="check" class="checkbtn">
+            <i class="fas fa-bars"></i>
+        </label>
+        <ul class="nav-links">
+            <li><a href="/home">Inicio</a></li>
+            <li><a href="#">Graficos</a></li>
+            <li><a href="{% url 'logout' %}">Cerrar sesion</a></li>
+        </ul>
+        <div class="logo">
+            <img src="{% static 'riesgo.png' %}" alt="Logo">
+        </div>
+    </nav>
+<!--<a href="#" class="btn"><button>ChatGPT</button></a>-->
+</div>
+
+<!-- Contenido -->
+<div class="content">
+
+    <ul class="accordion">
+        <li>
+            <input type="checkbox" class="accordion" id="one" onclick="cambiarGrafico('mut1'); desactivarOtros(this)" >
+            <label for="one">Datos de Mutualidades segun años</label>
+            <div class="content">
+
+                <!-- Botones para cambiar el gráfico -->
+                <button class="btn btn-primary" onclick="cambiarGrafico('mut1')">2018</button>
+                <button class="btn btn-primary" onclick="cambiarGrafico('mut2')">2019</button>
+                <button class="btn btn-primary" onclick="cambiarGrafico('mut3')">2020</button>
+                <button class="btn btn-primary" onclick="cambiarGrafico('mut4')">2021</button>
+
+                <!-- Contenedor de gráficos -->
+
+                <div id="plotly_div_mut1">{{ plotly_div1|safe }}</div>
+                <div id="plotly_div_mut2">{{ plotly_div2|safe }}</div>
+                <div id="plotly_div_mut3">{{ plotly_div3|safe }}</div>
+                <div id="plotly_div_mut4">{{ plotly_div4|safe }}</div>
+
+            </div>
+        </li>
+        <li>
+            <input type="checkbox" class="accordion" id="two" onclick="cambiarGrafico('eco1'); desactivarOtros(this)">
+            <label for="two">Datos Actividad Economica segun Mutualidad</label>
+            <div class="content">
+
+                <!-- Botones para cambiar el gráfico -->
+                <button class="btn btn-primary" onclick="cambiarGrafico('eco1')">Achs</button>
+                <button class="btn btn-primary" onclick="cambiarGrafico('eco2')">Museg</button>
+                <button class="btn btn-primary" onclick="cambiarGrafico('eco3')">Ist</button>
+
+                <!-- Contenedor de gráficos -->
+
+                <div id="plotly_div_eco1">{{ plotly_div5|safe }}</div>
+                <div id="plotly_div_eco2">{{ plotly_div6|safe }}</div>
+                <div id="plotly_div_eco3">{{ plotly_div7|safe }}</div>
+
+            </div>
+        </li>
+        <li>
+            <input type="checkbox" class="accordion" id="three" onclick="cambiarGrafico('tea1'); desactivarOtros(this)">
+            <label for="three">Tasa de accidentes</label>
+            <div class="content">
+
+                <!-- Botones para cambiar el gráfico -->
+                <button class="btn btn-primary" onclick="cambiarGrafico('tea1')">Achs</button>
+                <button class="btn btn-primary" onclick="cambiarGrafico('tea2')">Museg</button>
+                <button class="btn btn-primary" onclick="cambiarGrafico('tea3')">Ist</button>
+
+                <!-- Contenedor de gráficos -->
+
+                <div id="plotly_div_tea1">{{ plotly_div8|safe }}</div>
+                <div id="plotly_div_tea2">{{ plotly_div9|safe }}</div>
+                <div id="plotly_div_tea3">{{ plotly_div10|safe }}</div>
+
+            </div>
+        </li>
+        <li>
+            <input type="checkbox" class="accordion" id="four" onclick="cambiarGrafico('sexo1'); desactivarOtros(this)">
+            <label for="four">Accidentes por Genero</label>
+            <div class="content">
+
+                <!-- Botones para cambiar el gráfico -->
+                <button class="btn btn-primary" onclick="cambiarGrafico('sexo1')">Hombre</button>
+                <button class="btn btn-primary" onclick="cambiarGrafico('sexo2')">Mujer</button>
+
+                <!-- Contenedor de gráficos -->
+
+                <div id="plotly_div_sexo1">{{ plotly_div11|safe }}</div>
+                <div id="plotly_div_sexo2">{{ plotly_div12|safe }}</div>
+
+            </div>
+        </li>
+    </ul>
+
+</div>
+
+<footer class="pie-pagina">
+    <div class="grupo-1">
+        <div class="box">
+            <figure>
+                <a href="">
+                    <img src="{% static 'logoDuoc.png' %}" alt="Logo">
+                </a>
+            </figure>
+        </div>
+        <div class="box">
+            <h2>Conocenos</h2>
+            <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Porro, eius.</p>
+        </div>
+        <div class="box">
+            <h2>Siguenos</h2>
+            <div class="social">
+                <a href="#" class="fa fa-facebook"></a>
+                <a href="#" class="fa fa-instagram"></a>
+                <a href="#" class="fa fa-youtube"></a>
+                <a href="#" class="fa fa-whatsapp"></a>
+            </div>
+        </div>
+    </div>
+
+    <div class="grupo-2">
+        <small>&copy; 2023 Tu Empresa. Todos los derechos reservados.</small>
+    </div>
+</footer>
+
+<script>
+    function cambiarGrafico(grafico) {
+    
+        // Oculta todos los divs
+        document.querySelectorAll('[id^="plotly_div"]').forEach(div => div.style.display = 'none');
+    
+        // Muestra el div correspondiente al gráfico seleccionado
+        document.getElementById(`plotly_div_${grafico}`).style.display = 'block';
+    }
+
+    function desactivarOtros(checkbox) {
+        // Obtener todos los checkboxes
+        var checkboxes = document.querySelectorAll('.accordion');
+
+        // Desactivar todos los checkboxes excepto el que se hizo clic
+        checkboxes.forEach(function (element) {
+            if (element !== checkbox) {
+                element.checked = false;
+            }
+        });
+    }
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

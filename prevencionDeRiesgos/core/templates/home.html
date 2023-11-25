@@ -14,19 +14,22 @@
 
 <!-- Barra de tareas -->
 <div class="header">
-    <nav>
+    <nav class="navbar">
+        <input type="checkbox" id="check">
+        <label for="check" class="checkbtn">
+            <i class="fas fa-bars"></i>
+        </label>
         <ul class="nav-links">
-            <li><a href="/home">Inicio</a></li>
-            <li><a href="/graficoMut">Graficos</a></li>
-            <li><a href="#">Cerrar sesion</a></li>
-            <li><button type=submit><a href="{% url 'signup' %}">Signup</a></button></li>
-            <li><button type=submit> <a href="{% url 'login' %}">Login</a></button></li>
-             <li><button type=submit><a href="{% url 'logout' %}">SignOut</a> </button></li>
+            <li><a href="#">Inicio</a></li>
+            <li><a href="/grafico">Graficos</a></li>
+            <li><a href="{% url 'login' %}">Iniciar sesión</a></li>
+            <li><a href="{% url 'signup' %}">Registrarse</a></li>
         </ul>
+        <div class="logo">
+            <img src="{% static 'riesgo.png' %}" alt="Logo">
+        </div>
     </nav>
-    <div class="logo">
-        <img src="{% static 'riesgo.png' %}" alt="Logo">
-    </div>
+<!--<a href="#" class="btn"><button>ChatGPT</button></a>-->
 </div>
 
 <!-- Contenido -->
@@ -48,7 +51,6 @@
         </div>
         <div class="box">
             <h2>Conocenos</h2>
-            <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Porro, eius.</p>
             <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Porro, eius.</p>
         </div>
         <div class="box">

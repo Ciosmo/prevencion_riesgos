@@ -15,8 +15,7 @@ import pandas as pd
 def home(request):
     return render(request, 'home.html')
 
-
-def graficoMut(request, categoria_id=1):
+def grafico(request, categoria_id=1):
     # Obtener los datos de tu base de datos
     datos_eco = EconomicActivity.objects.all()
     datos_mut = Mutualidad.objects.all()
@@ -85,9 +84,9 @@ def graficoMut(request, categoria_id=1):
 
     tea1 = px.bar(df_tasa_eco_act, x='name', y='achs', title=f'Tasa de accidentes por Actividad Económica', color='Categoria')
 
-    tea2 = px.bar(df_tasa_eco_act, x='name', y='museg', title=f'Cantidad de accidentes por Actividad Económica', color='Categoria')
+    tea2 = px.bar(df_tasa_eco_act, x='name', y='museg', title=f'Tasa de accidentes por Actividad Económica', color='Categoria')
 
-    tea3 = px.bar(df_tasa_eco_act, x='name', y='ist', title=f'Cantidad de accidentes por Actividad Económica', color='Categoria')
+    tea3 = px.bar(df_tasa_eco_act, x='name', y='ist', title=f'Tasa de accidentes por Actividad Económica', color='Categoria')
 
     #Sexo
 
@@ -109,7 +108,7 @@ def graficoMut(request, categoria_id=1):
     plot_div_sexo1 = plot(sexo1, output_type='div', include_plotlyjs=False)
     plot_div_sexo2 = plot(sexo2, output_type='div', include_plotlyjs=False)
 
-    return render(request, 'GraficoMut.html', {'plotly_div1': plot_div_mut1,
+    return render(request, 'Grafico.html', {'plotly_div1': plot_div_mut1,
                                             'plotly_div2': plot_div_mut2,
                                             'plotly_div3': plot_div_mut3,
                                             'plotly_div4': plot_div_mut4,

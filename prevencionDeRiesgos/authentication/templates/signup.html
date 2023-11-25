@@ -1,19 +1,41 @@
+{% load static %}
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>signup</title>
-</head
+    <link rel="stylesheet" href="{% static 'login.css' %}">
+    <title>Registrate</title>
+</head>
 <body>
-{% block content %}
-<h2>Sign Up</h2>
-<form method="post">
-  {% csrf_token %}
-  {{ form.as_p }}
-  <button type="submit">Sign Up</button>
-</form>
-{% endblock %}
+
+<!-- Barra de tareas -->
+<div class="header">
+  <nav class="navbar">
+      <ul class="nav-links">
+          <li><a href="/home">
+            <img src="{% static 'volver.png' %}" alt="Logo">
+          </a></li>
+      </ul>
+      <div class="logo">
+          <img src="{% static 'riesgo.png' %}" alt="Logo">
+      </div>
+  </nav>
+</div>
+
+<div class="content">
+
+  <h1>Registrate</h1>
+  {% block content %}
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Sign Up</button>
+  </form>
+  {% endblock %}
+
+</div>
+
 </body>
 </html>

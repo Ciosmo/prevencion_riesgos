@@ -1,21 +1,42 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    {% block title %}Log In{% endblock %}
+    <link rel="stylesheet" href="{% static 'login.css' %}">
+    <title>Iniciar sesión</title>
 </head>
 <body>
-    
-{% block content %}
-<h2>Log In</h2>
-<form method="post">
-  {% csrf_token %}
-  {{ form.as_p }}
-  <button type="submit">Log In</button>
-</form>
-{% endblock %}
 
+<!-- Barra de tareas -->
+<div class="header">
+  <nav class="navbar">
+      <ul class="nav-links">
+          <li><a href="/home">
+            <img src="{% static 'volver.png' %}" alt="Logo">
+          </a></li>
+      </ul>
+      <div class="logo">
+          <img src="{% static 'riesgo.png' %}" alt="Logo">
+      </div>
+  </nav>
+</div>
+
+<div class="content">
+
+  <h1>Ingresa tus datos</h1>
+  {% block content %}
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Log In</button>
+  </form>
+  {% endblock %}
+  <a href="{% url 'signup' %}">No estas registrado?</a>
+  
+</div>
 
 </body>
 </html>
