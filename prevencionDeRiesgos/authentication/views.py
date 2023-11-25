@@ -18,6 +18,6 @@ class CustomLoginView(LoginView):
 
         # Personaliza la redirección después del inicio de sesión
         if self.request.user.is_authenticated:
-            return redirect("home")  # Cambia "home" al nombre de tu URL de inicio
+            return redirect("grafico")  # Cambia "home" al nombre de tu URL de inicio
 
         return response
