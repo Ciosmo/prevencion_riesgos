@@ -2,6 +2,7 @@ import requests
 import os
 import re
 import openpyxl
+import unidecode
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin
 """
@@ -43,11 +44,17 @@ def downloadExcelFiles(url, downloadDir):
                         
                         newName = f"{title.replace(' ', '_')}download.xlsx"
                         filePath = os.path.join(downloadDir, newName)
+                      
+                        filePath = filePath.replace('Ã', 'A').replace('Â', '')
+
+
                         with open(filePath, 'wb') as file:
                             file.write(requests.get(fullUrl).content)
-                        downloadedFiles.append(filePath)
+                            
+                        downloadedFiles.append((title, filePath))
                         print(f"Download: {newName}")
-    return downloadedFiles                 
+    return downloadedFiles     
+    
 def extractedDataFromExcel_Type1(filePath):  
     wb = openpyxl.load_workbook(filePath)
     sheetsToProcess = ['31', '29', '38', '39', '28']
@@ -363,23 +370,125 @@ def extractedDataFromExcel_Type1(filePath):
                         print(f"MUSEG: {economicActivity['MUSEG']}%")
                         print(f"IST: {economicActivity['IST']}%")
                         print(f"Total: {categoryInfo['Total'][i]}%")
-                    print()
-def is_2022_file(fileName):
-    pattern = re.compile(r'_2022', re.IGNORECASE)
-    return re.search(pattern, fileName) is not None
-    
-def extractedDataFromExcel_Type2(): 
-       
+                    print()  
+ 
+def extractedDataFor2021(filePath):
+    workbook = openpyxl.load_workbook(filePath)
     pass
+ 
+def extractedDataFromExcel_Type2(filePath, extracted_year):
+       print(f"archivo procesado: {filePath}")
+       
+       workbook = openpyxl.load_workbook(filePath)
+       sheetsToProcess = ['33']
+       
+       
+       wantedSheet = '33'
+       if extracted_year == 2014:
+           wantedSheet = '30'
+       elif extracted_year == 2015:
+           wantedSheet = '31'
+       
+       for sheet in sheetsToProcess:
+           if sheet in workbook.sheetnames:
+                wb = workbook[wantedSheet]
+                print(f"switched to sheet: {wb.title}")
+                categoryData = {
+                    "ACCIDENTES DEL TRABAJO": {
+                            "economicActivityStart":'B10',   
+                            "economicActivityEnd": 'B27',
+                            "totalColumn": 'F',
+                            "additionalValuesColumns": ['G', 'H', 'I', 'J'],
+                    }
+                }
+                   
+                data = {}
+                   
+                for category, categoryInfo in categoryData.items():
+                    data[category] = {}
+                    
+                    economicActivityStart = wb[categoryInfo['economicActivityStart']]
+                    economicActivityEnd = wb[categoryInfo['economicActivityEnd']]
+                    totalColumn = categoryInfo['totalColumn']
+                    economicActivities = []
+
+                    for row in range(economicActivityStart.row, economicActivityEnd.row + 1):
+                        economic_activity_cell = wb.cell(row=row, column=economicActivityStart.column)
+                        economicActivity = economic_activity_cell.value
+                                
+                        achs_value = economic_activity_cell.offset(column=1).value
+                        museg_value = economic_activity_cell.offset(column=2).value
+                        ist_value = economic_activity_cell.offset(column=3).value
+                        totalValue = wb[f"{totalColumn}{row}"].value 
+                        
+                        additionalValues = [wb[f"{col_letter}{row}"].value for col_letter in categoryInfo.get("additionalValuesColumns", [])]
+                                
+                        economicActivities.append({
+                            "Economic Activity": economicActivity,
+                            "ACHS": achs_value,
+                            "MUSEG": museg_value,
+                            "IST": ist_value,
+                            "TOTAL": totalValue,
+                            "Additional Values": additionalValues,
+                        })
+                    data[category]['Economic Activities'] = economicActivities
+
+                for category, categoryInfo in data.items():
+                        print(category)
+                        for economic_activity in categoryInfo['Economic Activities']:
+                            print(f"Economic Activity: {economic_activity['Economic Activity']}")
+                            print(f"ACHS: {economic_activity['ACHS']}")
+                            print(f"MUSEG: {economic_activity['MUSEG']}")
+                            print(f"IST: {economic_activity['IST']}")
+                            print(f"Total: {economic_activity['TOTAL']}")
+                            
+                            #Formato pa valores adicionales / format for the additional vlues
+                            additionalValuesLabels = ['ACHS', 'MUSEG', "IST", "TOTAL"]
+                            additionalValuesStr = ", ".join([f"{label}: {value}" for label, value in zip(additionalValuesLabels, economic_activity['Additional Values'])])
+                            
+                            
+                            print(additionalValuesStr.replace(", ", ",\n"))
+                            print()
+def getFileYear(fileName):
+    decodedFileName = fileName.encode('utf-8').decode('utf-8')
+    cleanedFileName = unidecode.unidecode(decodedFileName)
+    match = re.search(r'\d{4}', cleanedFileName)
+    if match:
+        year = int(match.group())
+        print(f"Extracted year: {year}")
+        return year
+    return None
+
+def is_2022_file(fileName):
+    
+    cleanedFileName = unidecode.unidecode(fileName)
+    pattern = re.compile(r'2022', re.IGNORECASE)
+    result =  re.search(pattern, cleanedFileName) is not None
+    print(f"Original File Name: {fileName}")
+    print(f"Cleaned File Name: {cleanedFileName}")
+    print(f"Checking if {fileName} is a 2022 file: {result}")
+    return result
 
 if __name__ == "__main__":
     webPageUrl = "https://www.suseso.cl/608/w3-propertyvalue-10364.html"# Replace with your URL
     downloadDir = os.path.join(os.getcwd(), "downloadedFiles")
     downloadedFiles = downloadExcelFiles(webPageUrl, downloadDir)
     
-    for filePath in downloadedFiles:
-        fileName = os.path.basename(filePath)
-        if is_2022_file(fileName):
+    downloadedFiles.sort(key=lambda x: getFileYear(x[0]) or 0, reverse=True)
+
+    
+    lastProcessedFileYear = None
+    
+    
+    for title, filePath in downloadedFiles:
+        if is_2022_file(title):
+            print(f"Identified as 2022. Processing with type1")
             extractedDataFromExcel_Type1(filePath)
+            lastProcessedFileYear = 2022
         else:
-            extractedDataFromExcel_Type2(filePath)
+            year = getFileYear(title)
+            if lastProcessedFileYear is None or year == lastProcessedFileYear - 1:
+                extractedDataFromExcel_Type2(filePath, year)
+                lastProcessedFileYear = year
+            else:
+                print(f"Skipping file: {title} (Unexpected year)")
