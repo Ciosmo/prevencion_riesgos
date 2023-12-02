@@ -381,8 +381,8 @@ def extractedDataFromExcel_Type2(filePath, extracted_year):
        
        workbook = openpyxl.load_workbook(filePath)
        sheetsToProcess = ['33']
-       
-       
+       #heres where basd on the param extracted_year the logic decides what
+       #excel sheet to use    
        wantedSheet = '33'
        if extracted_year == 2014:
            wantedSheet = '30'
@@ -400,10 +400,8 @@ def extractedDataFromExcel_Type2(filePath, extracted_year):
                             "totalColumn": 'F',
                             "additionalValuesColumns": ['G', 'H', 'I', 'J'],
                     }
-                }
-                   
-                data = {}
-                   
+                }        
+                data = {}  
                 for category, categoryInfo in categoryData.items():
                     data[category] = {}
                     
