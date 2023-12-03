@@ -1,6 +1,5 @@
 from core.models import EconomicActivity, Mutualidad, Tasa_Eco_Act, Sexo
 from django.contrib.auth.models import User
-from django.shortcuts import render
 from django.contrib import messages
 from django.contrib.auth import get_user_model
 
@@ -10,7 +9,20 @@ import plotly.express as px
 from plotly.offline import plot
 import pandas as pd
 
-# Create your views here.
+from core.form import AccidenteForm
+
+def registrar_accidente(request):
+    if request.method == 'POST':
+        form = AccidenteForm(request.POST)
+        if form.is_valid():
+            form.save()
+            
+            return redirect('home')  
+    else:
+        form = AccidenteForm()
+
+    return render(request, 'Formulario.html', {'form': form})
+
 
 def home(request):
     return render(request, 'home.html')

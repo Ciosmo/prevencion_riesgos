@@ -35,3 +35,16 @@ class Sexo(models.Model):
     men = models.DecimalField(max_digits=10, decimal_places=2, null=True)
     women = models.DecimalField(max_digits=10, decimal_places=2, null=True)
     total = models.DecimalField(max_digits=10, decimal_places=2, null=True)
+
+class AccidenteLaboral(models.Model):
+    nombre_empleado = models.CharField(max_length=255)
+    actividad_economica = models.CharField(max_length=255)
+    genero = models.CharField(max_length=10, choices=[('masculino', 'Masculino'), ('femenino', 'Femenino')])
+    comuna = models.CharField(max_length=255)
+    fecha_accidente = models.DateField()
+    hora_accidente = models.TimeField()
+    tipo_accidente = models.CharField(max_length=50, choices=[('trabajo', 'Trabajo'), ('trayecto', 'Trayecto')])
+    descripcion_accidente = models.TextField()
+
+    def __str__(self):
+        return f"{self.nombre_empleado} - {self.fecha_accidente}"
