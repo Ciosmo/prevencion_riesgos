@@ -1,4 +1,4 @@
-from core.models import EconomicActivity, Mutualidad, Tasa_Eco_Act, Sexo
+from core.models import EconomicActivity, Mutualidad, Tasa_Eco_Act, Sexo, AccidenteLaboral
 from django.contrib.auth.models import User
 from django.contrib import messages
 from django.contrib.auth import get_user_model
@@ -11,6 +11,13 @@ import pandas as pd
 
 from core.form import AccidenteForm
 
+def home(request):
+    return render(request, 'home.html')
+
+def datosform(request):
+    accidentes = AccidenteLaboral.objects.all()
+    return render(request, 'GraficoForm.html', {'accidentes': accidentes})
+
 def registrar_accidente(request):
     if request.method == 'POST':
         form = AccidenteForm(request.POST)
@@ -22,10 +29,6 @@ def registrar_accidente(request):
         form = AccidenteForm()
 
     return render(request, 'Formulario.html', {'form': form})
-
-
-def home(request):
-    return render(request, 'home.html')
 
 def grafico(request, categoria_id=1):
     # Obtener los datos de tu base de datos

@@ -14,7 +14,7 @@
 <div class="header">
   <nav class="navbar">
       <ul class="nav-links">
-          <li><a href="/grafico">
+          <li><a href="javascript:void(0);" onclick="goBack()">
             <img src="{% static 'volver.png' %}" alt="Logo">
           </a></li>
       </ul>
@@ -38,4 +38,10 @@
 </div>
 
 </body>
+
+<script>
+  function goBack() {
+      window.history.back();
+  }
+</script>
 </html>

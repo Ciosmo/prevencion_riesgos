@@ -1,0 +1,104 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{% static 'main.css' %}">
+    <title>Datos Prevencion de Riesgos</title>
+    <script src="https://kit.fontawesome.com/827f93132a.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+
+<!-- Barra de tareas -->
+<div class="header">
+    <nav class="navbar">
+        <input type="checkbox" id="check">
+        <label for="check" class="checkbtn">
+            <i class="fas fa-bars"></i>
+        </label>
+        <ul class="nav-links">
+            <li><a href="/home">Inicio</a></li>
+            <li><a href="/grafico">Graficos</a></li>
+            <li><a href="{% url 'datosform' %}">Accidentes Laborales</a></li>
+            <li><a href="/registrar_accidente">Registrar accidente</a></li>
+            <li><a href="{% url 'logout' %}">Cerrar sesion</a></li>
+        </ul>
+        <div class="logo">
+            <img src="{% static 'riesgo.png' %}" alt="Logo">
+        </div>
+    </nav>
+<!--<a href="#" class="btn"><button>ChatGPT</button></a>-->
+</div>
+
+<!-- Contenido -->
+<div class="content">
+
+    <h2>Lista de Accidentes Laborales</h2>
+
+    <table class="accidentes-table">
+        <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Actividad Económica</th>
+                <th>Género</th>
+                <th>Comuna</th>
+                <th>Fecha Accidente</th>
+                <th>Hora Accidente</th>
+                <th>Tipo Accidente</th>
+                <th>Descripción</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for accidente in accidentes %}
+                <tr>
+                    <td>{{ accidente.nombre_empleado }}</td>
+                    <td>{{ accidente.actividad_economica }}</td>
+                    <td>{{ accidente.genero }}</td>
+                    <td>{{ accidente.comuna }}</td>
+                    <td>{{ accidente.fecha_accidente }}</td>
+                    <td>{{ accidente.hora_accidente }}</td>
+                    <td>{{ accidente.tipo_accidente }}</td>
+                    <td>{{ accidente.descripcion_accidente }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+</div>
+
+<footer class="pie-pagina">
+    <div class="grupo-1">
+        <div class="box">
+            <figure>
+                <a href="">
+                    <img src="{% static 'logoDuoc.png' %}" alt="Logo">
+                </a>
+            </figure>
+        </div>
+        <div class="box">
+            <h2>Conocenos</h2>
+            <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Porro, eius.</p>
+        </div>
+        <div class="box">
+            <h2>Siguenos</h2>
+            <div class="social">
+                <a href="#" class="fa fa-facebook"></a>
+                <a href="#" class="fa fa-instagram"></a>
+                <a href="#" class="fa fa-youtube"></a>
+                <a href="#" class="fa fa-whatsapp"></a>
+            </div>
+        </div>
+    </div>
+
+    <div class="grupo-2">
+        <small>&copy; 2023 Tu Empresa. Todos los derechos reservados.</small>
+    </div>
+</footer>
+
+</body>
+</html>

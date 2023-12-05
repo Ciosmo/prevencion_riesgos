@@ -1,10 +1,26 @@
 from django.db import models
 
+class ExcelFile(models.Model):
+    title = models.CharField(max_length=255)
+    file_path = models.CharField(max_length=255)
+    year = models.IntegerField()
+
+    def str(self):
+        return self.title
+
+class ExcelPage(models.Model):
+    file = models.ForeignKey(ExcelFile, on_delete=models.CASCADE)
+    sheet_name = models.CharField(max_length=255)
+
+    def str(self):
+        return f"{self.file.title} - {self.sheet_name}"
+
 # Create your models here.
 class Category(models.Model):
     name = models.CharField(max_length=250)
 
 class EconomicActivity(models.Model):
+    #excel_page = models.ForeignKey(ExcelPage, on_delete=models.CASCADE)
     category = models.ForeignKey(Category, on_delete=models.CASCADE, default=1)
     name = models.CharField(max_length=255)
     achs = models.DecimalField(max_digits=10, decimal_places=2, null=True)
@@ -13,6 +29,7 @@ class EconomicActivity(models.Model):
     total = models.DecimalField(max_digits=10, decimal_places=2, null=True)
 
 class Mutualidad(models.Model):
+    #excel_page = models.ForeignKey(ExcelPage, on_delete=models.CASCADE)
     category = models.ForeignKey(Category, on_delete=models.CASCADE, default=1)
     mutual = models.CharField(max_length=255)
     anio2018 = models.DecimalField(max_digits=10, decimal_places=2, null=True)
@@ -22,6 +39,7 @@ class Mutualidad(models.Model):
     anio2022 = models.DecimalField(max_digits=10, decimal_places=2, null=True)
 
 class Tasa_Eco_Act(models.Model):
+    #excel_page = models.ForeignKey(ExcelPage, on_delete=models.CASCADE)
     category = models.ForeignKey(Category, on_delete=models.CASCADE, default=1)
     name = models.CharField(max_length=255)
     achs = models.DecimalField(max_digits=10, decimal_places=2, null=True)
@@ -30,6 +48,7 @@ class Tasa_Eco_Act(models.Model):
     total = models.DecimalField(max_digits=10, decimal_places=2, null=True)
 
 class Sexo(models.Model):
+    #excel_page = models.ForeignKey(ExcelPage, on_delete=models.CASCADE)
     category = models.ForeignKey(Category, on_delete=models.CASCADE, default=1)
     name = models.CharField(max_length=255)
     men = models.DecimalField(max_digits=10, decimal_places=2, null=True)
@@ -39,7 +58,7 @@ class Sexo(models.Model):
 class AccidenteLaboral(models.Model):
     nombre_empleado = models.CharField(max_length=255)
     actividad_economica = models.CharField(max_length=255)
-    genero = models.CharField(max_length=10, choices=[('masculino', 'Masculino'), ('femenino', 'Femenino')])
+    genero = models.CharField(max_length=10, choices=[('masculino', 'Masculino'), ('femenino', 'Femenino')], null=True)
     comuna = models.CharField(max_length=255)
     fecha_accidente = models.DateField()
     hora_accidente = models.TimeField()

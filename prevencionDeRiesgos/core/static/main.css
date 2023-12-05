@@ -74,7 +74,6 @@ nav ul li a:hover{
 }
 
 
-
 .content {
     padding: 50px;
     flex: 1;
@@ -190,6 +189,21 @@ nav ul li a:hover{
 .pie-pagina .grupo-2{
     padding: 15px 10pc;
     text-align: center;
+}
+
+.accidentes-table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+.accidentes-table th, .accidentes-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+.accidentes-table th {
+    background-color: #f2f2f2;
 }
 
 
