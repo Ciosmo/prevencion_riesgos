@@ -371,27 +371,22 @@ def extractedDataFromExcel_Type1(filePath):
                         print(f"IST: {economicActivity['IST']}%")
                         print(f"Total: {categoryInfo['Total'][i]}%")
                     print()  
- 
-def extractedDataFor2021(filePath):
-    workbook = openpyxl.load_workbook(filePath)
-    pass
- 
+"""
 def extractedDataFromExcel_Type2(filePath, extracted_year):
        print(f"archivo procesado: {filePath}")
        
        workbook = openpyxl.load_workbook(filePath)
-       sheetsToProcess = ['33']
+       sheetsToProcess = ['33', '40']
        #heres where basd on the param extracted_year the logic decides what
        #excel sheet to use    
-       wantedSheet = '33'
        if extracted_year == 2014:
-           wantedSheet = '30'
+           sheetsToProcess = ['30']
        elif extracted_year == 2015:
-           wantedSheet = '31'
+           sheetsToProcess = ['31']
        
        for sheet in sheetsToProcess:
            if sheet in workbook.sheetnames:
-                wb = workbook[wantedSheet]
+                wb = workbook[sheet]
                 print(f"switched to sheet: {wb.title}")
                 categoryData = {
                     "ACCIDENTES DEL TRABAJO": {
@@ -404,7 +399,6 @@ def extractedDataFromExcel_Type2(filePath, extracted_year):
                 data = {}  
                 for category, categoryInfo in categoryData.items():
                     data[category] = {}
-                    
                     economicActivityStart = wb[categoryInfo['economicActivityStart']]
                     economicActivityEnd = wb[categoryInfo['economicActivityEnd']]
                     totalColumn = categoryInfo['totalColumn']
@@ -447,6 +441,97 @@ def extractedDataFromExcel_Type2(filePath, extracted_year):
                             
                             print(additionalValuesStr.replace(", ", ",\n"))
                             print()
+"""
+def extractedDataFromExcel_Type2(filePath, extracted_year):
+    print(f"archivo procesado: {filePath}")
+    
+    workbook = openpyxl.load_workbook(filePath)
+    
+    sheetsToProcess = ['33', '40']
+    sheetsForYear2014 = ['30']
+    sheetsForYear201 = ['31']
+
+    for sheet in sheetsToProcess:
+        if sheet in workbook.sheetnames:
+            wb = workbook[sheet]
+            print(f"switched to sheet: {wb.title}")
+
+            if sheet == '40':
+                print(f"custom logic for sheet: {wb.title}")
+                categoryData = {
+                    "ACCIDENTES DEL TRABAJO": {
+                        "economicActivityStart": 'B8',
+                        "economicActivityEnd": 'B24',
+                        "totalColumn": 'G'
+                    },
+                    "ACCIDENTES DE TRAYECTO":{
+                        "economicActivityStart": 'B26',
+                        "economicActivityEnd": 'B42',
+                        "totalColumn": 'G'
+                    },
+                    "ACCIDENTES (TRABAJO + TRAYECTO)":{
+                        "economicActivityStart": 'B44',
+                        "economicActivityEnd": 'B60',
+                        "totalColumn": 'G'
+                    }
+                }
+
+            else:
+                # Default logic for other sheets
+                categoryData = {
+                    "ACCIDENTES DEL TRABAJO": {
+                        "economicActivityStart": 'B10',
+                        "economicActivityEnd": 'B27',
+                        "totalColumn": 'F',
+                        "additionalValuesColumns": ['G', 'H', 'I', 'J'],
+                    }
+                }
+
+            data = {}
+
+            for category, categoryInfo in categoryData.items():
+                data[category] = {}
+
+                economicActivityStart = wb[categoryInfo['economicActivityStart']]
+                economicActivityEnd = wb[categoryInfo['economicActivityEnd']]
+                totalColumn = categoryInfo['totalColumn']
+
+                economicActivities = []
+                totalValues = []
+
+                for row in range (economicActivityStart.row, economicActivityEnd.row + 1):
+                    economicActivityCell = wb.cell(row=row,column=economicActivityStart.column)
+                    economicActivity = economicActivityCell.value
+
+                    achsValue = economicActivityCell.offset(column=1).value
+                    musegValue = economicActivityCell.offset(column=2).value
+                    istValue = economicActivityCell.offset(column=3).value
+                    islValue = economicActivityCell.offset(column=4).value
+                    totalValue = wb[f"{totalColumn}{row}"].value
+
+                    economicActivities.append({
+                        "Economic Activity": economicActivity,
+                        "ACHS": achsValue,
+                        "MUSEG": musegValue,
+                        "IST": istValue,
+                        "ISL": islValue
+                    })
+                    totalValues.append(totalValue)
+
+                data[category]['Total'] = totalValues
+                data[category]['Economic Activities'] = economicActivities
+
+            for category, categoryInfo in data.items():
+                print(category)
+                for i, economicActivity in enumerate(categoryInfo['Economic Activities']):
+                    print(f"Economic activity: {economicActivity['Economic Activity']}")
+                    print(f"ACHS: {economicActivity['ACHS']}")
+                    print(f"MUSEG: {economicActivity['MUSEG']}")
+                    print(f"IST: {economicActivity['IST']}")
+                    print(f"ISL: {economicActivity['ISL']}")
+                    print(f"Total: {categoryInfo['Total'][i]}")
+                print()
+                        
 def getFileYear(fileName):
     decodedFileName = fileName.encode('utf-8').decode('utf-8')
     cleanedFileName = unidecode.unidecode(decodedFileName)
