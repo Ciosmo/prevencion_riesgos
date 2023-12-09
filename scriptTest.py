@@ -442,11 +442,91 @@ def extractedDataFromExcel_Type2(filePath, extracted_year):
                             print(additionalValuesStr.replace(", ", ",\n"))
                             print()
 """
+"""
 def extractedDataFromExcel_Type2(filePath, extracted_year):
     print(f"archivo procesado: {filePath}")
     
     workbook = openpyxl.load_workbook(filePath)
-    
+
+    sheetsToProcess = ['33', '40', ]
+
+    for sheet in sheetsToProcess:
+        if sheet in workbook.sheetnames:
+            wb = workbook[sheet]
+            print(f"switched to sheet: {wb.title}")
+
+            if sheet == '40':
+                    print(f"custom logic for sheet: {wb.title}")
+                    categoryData = {
+                        "ACCIDENTES DEL TRABAJO": {
+                            "economicActivityStart": 'B8',
+                            "economicActivityEnd": 'B24',
+                            "totalColumn": 'G'
+                        },
+                        "ACCIDENTES DE TRAYECTO":{
+                            "economicActivityStart": 'B26',
+                            "economicActivityEnd": 'B42',
+                            "totalColumn": 'G'
+                        },
+                        "ACCIDENTES (TRABAJO + TRAYECTO)":{
+                            "economicActivityStart": 'B44',
+                            "economicActivityEnd": 'B60',
+                            "totalColumn": 'G'
+                        }
+                    }   
+            elif sheet == '31':
+                processingLogicForSheet31(wb)
+            data = {}
+
+            for category, categoryInfo in categoryData.items():
+                data[category] = {}
+
+                economicActivityStart = wb[categoryInfo['economicActivityStart']]
+                economicActivityEnd = wb[categoryInfo['economicActivityEnd']]
+                totalColumn = categoryInfo['totalColumn']
+
+                economicActivities = []
+                totalValues = []
+
+                for row in range (economicActivityStart.row, economicActivityEnd.row + 1):
+                    economicActivityCell = wb.cell(row=row,column=economicActivityStart.column)
+                    economicActivity = economicActivityCell.value
+
+                    achsValue = economicActivityCell.offset(column=1).value
+                    musegValue = economicActivityCell.offset(column=2).value
+                    istValue = economicActivityCell.offset(column=3).value
+                    islValue = economicActivityCell.offset(column=4).value
+                    totalValue = wb[f"{totalColumn}{row}"].value
+
+                    economicActivities.append({
+                        "Economic Activity": economicActivity,
+                        "ACHS": achsValue,
+                        "MUSEG": musegValue,
+                        "IST": istValue,
+                        "ISL": islValue
+                    })
+                    totalValues.append(totalValue)
+
+                data[category]['Total'] = totalValues
+                data[category]['Economic Activities'] = economicActivities
+
+            for category, categoryInfo in data.items():
+                print(category)
+                for i, economicActivity in enumerate(categoryInfo['Economic Activities']):
+                    print(f"Economic activity: {economicActivity['Economic Activity']}")
+                    print(f"ACHS: {economicActivity['ACHS']}")
+                    print(f"MUSEG: {economicActivity['MUSEG']}")
+                    print(f"IST: {economicActivity['IST']}")
+                    print(f"ISL: {economicActivity['ISL']}")
+                    print(f"Total: {categoryInfo['Total'][i]}")
+                print()
+"""
+"""
+def extractedDataFromExcel_Type2(filePath, extracted_year):
+    print(f"archivo procesado: {filePath}")
+
+    workbook = openpyxl.load_workbook(filePath)
+
     sheetsToProcess = ['33', '40']
     sheetsForYear2014 = ['30']
     sheetsForYear201 = ['31']
@@ -531,7 +611,208 @@ def extractedDataFromExcel_Type2(filePath, extracted_year):
                     print(f"ISL: {economicActivity['ISL']}")
                     print(f"Total: {categoryInfo['Total'][i]}")
                 print()
+"""
+def extractedDataFromExcel_Type2(filePath, extracted_year):
+       print(f"archivo procesado: {filePath}")
+       
+       workbook = openpyxl.load_workbook(filePath)
+       sheetsToProcess = ['33', '40']
+       #heres where basd on the param extracted_year the logic decides what
+       #excel sheet to use    
+       if extracted_year == 2014:
+           sheetsToProcess = '30'
+       elif extracted_year == 2015:
+           sheetsToProcess = '31'
+       
+       for sheet in sheetsToProcess:
+           if sheet in workbook.sheetnames:
+                wb = workbook[sheet]
+                print(f"switched to sheet: {wb.title}")
+
+                if sheet == '40':
+                    processingLogicForSheet40(wb)
+                else:
+                    categoryData = {
+                        "ACCIDENTES DEL TRABAJO": {
+                                "economicActivityStart":'B10',   
+                                "economicActivityEnd": 'B27',
+                                "totalColumn": 'F',
+                                "additionalValuesColumns": ['G', 'H', 'I', 'J'],
+                        }
+                    }        
+                    data = {}  
+                    for category, categoryInfo in categoryData.items():
+                        data[category] = {}
                         
+                        economicActivityStart = wb[categoryInfo['economicActivityStart']]
+                        economicActivityEnd = wb[categoryInfo['economicActivityEnd']]
+                        totalColumn = categoryInfo['totalColumn']
+                        economicActivities = []
+
+                        for row in range(economicActivityStart.row, economicActivityEnd.row + 1):
+                            economic_activity_cell = wb.cell(row=row, column=economicActivityStart.column)
+                            economicActivity = economic_activity_cell.value
+                                    
+                            achs_value = economic_activity_cell.offset(column=1).value
+                            museg_value = economic_activity_cell.offset(column=2).value
+                            ist_value = economic_activity_cell.offset(column=3).value
+                            totalValue = wb[f"{totalColumn}{row}"].value 
+                            
+                            additionalValues = [wb[f"{col_letter}{row}"].value for col_letter in categoryInfo.get("additionalValuesColumns", [])]
+                                    
+                            economicActivities.append({
+                                "Economic Activity": economicActivity,
+                                "ACHS": achs_value,
+                                "MUSEG": museg_value,
+                                "IST": ist_value,
+                                "TOTAL": totalValue,
+                                "Additional Values": additionalValues,
+                            })
+                        data[category]['Economic Activities'] = economicActivities
+
+                    for category, categoryInfo in data.items():
+                            print(category)
+                            for economic_activity in categoryInfo['Economic Activities']:
+                                print(f"Economic Activity: {economic_activity['Economic Activity']}")
+                                print(f"ACHS: {economic_activity['ACHS']}")
+                                print(f"MUSEG: {economic_activity['MUSEG']}")
+                                print(f"IST: {economic_activity['IST']}")
+                                print(f"Total: {economic_activity['TOTAL']}")
+                                
+                                #Formato pa valores adicionales / format for the additional vlues
+                                additionalValuesLabels = ['ACHS', 'MUSEG', "IST", "TOTAL"]
+                                additionalValuesStr = ", ".join([f"{label}: {value}" for label, value in zip(additionalValuesLabels, economic_activity['Additional Values'])])
+                                
+                                
+                                print(additionalValuesStr.replace(", ", ",\n"))
+                                print()
+
+def processingLogicForSheet40(wb):
+                print(f"custom logic for sheet: {wb.title}")
+                categoryData = {
+                    "ACCIDENTES DEL TRABAJO": {
+                        "economicActivityStart": 'B8',
+                        "economicActivityEnd": 'B24',
+                        "totalColumn": 'G'
+                    },
+                    "ACCIDENTES DE TRAYECTO":{
+                        "economicActivityStart": 'B26',
+                        "economicActivityEnd": 'B42',
+                        "totalColumn": 'G'
+                    },
+                    "ACCIDENTES (TRABAJO + TRAYECTO)":{
+                        "economicActivityStart": 'B44',
+                        "economicActivityEnd": 'B60',
+                        "totalColumn": 'G'
+                    }
+                }
+                data = {}
+
+                for category, categoryInfo in categoryData.items():
+                    data[category] = {}
+
+                    economicActivityStart = wb[categoryInfo['economicActivityStart']]
+                    economicActivityEnd = wb[categoryInfo['economicActivityEnd']]
+                    totalColumn = categoryInfo['totalColumn']
+
+                    economicActivities = []
+                    totalValues = []
+
+                    for row in range (economicActivityStart.row, economicActivityEnd.row + 1):
+                        economicActivityCell = wb.cell(row=row,column=economicActivityStart.column)
+                        economicActivity = economicActivityCell.value
+
+                        achsValue = economicActivityCell.offset(column=1).value
+                        musegValue = economicActivityCell.offset(column=2).value
+                        istValue = economicActivityCell.offset(column=3).value
+                        islValue = economicActivityCell.offset(column=4).value
+                        totalValue = wb[f"{totalColumn}{row}"].value
+
+                        economicActivities.append({
+                            "Economic Activity": economicActivity,
+                            "ACHS": achsValue,
+                            "MUSEG": musegValue,
+                            "IST": istValue,
+                            "ISL": islValue
+                        })
+                        totalValues.append(totalValue)
+
+                    data[category]['Total'] = totalValues
+                    data[category]['Economic Activities'] = economicActivities
+
+                for category, categoryInfo in data.items():
+                    print(category)
+                    for i, economicActivity in enumerate(categoryInfo['Economic Activities']):
+                        print(f"Economic activity: {economicActivity['Economic Activity']}")
+                        print(f"ACHS: {economicActivity['ACHS']}")
+                        print(f"MUSEG: {economicActivity['MUSEG']}")
+                        print(f"IST: {economicActivity['IST']}")
+                        print(f"ISL: {economicActivity['ISL']}")
+                        print(f"Total: {categoryInfo['Total'][i]}")
+                    print()  
+    
+    
+def processingLogicForSheet31(wb):
+                print()
+                categoryData = {
+                    "ACCIDENTES DEL TRABAJO": {
+                        "mutualInicio": "B8",
+                        "mutualFinal": "B11",
+
+                    },
+                    "ACCIDENTES DE TRAYECTO": {
+                        "mutualInicio": "B13",
+                        "mutualFinal": "B16",
+                        
+                    },
+                    "POR ACCIDENTES (TRABAJO + TRAYECTO)": {
+                        "mutualInicio": "B18",
+                        "mutualFinal": "B21",
+                    
+                    }
+                }
+                data = {}
+
+                for category, categoryInfo in categoryData.items():
+                    data[category] = {}
+                    
+                    mutualInicioCell = wb[categoryInfo["mutualInicio"]]
+                    mutualFinalCell = wb[categoryInfo["mutualFinal"]]
+                    
+        
+                    
+                    mutuales = []
+
+                    for row in range(mutualInicioCell.row, mutualFinalCell.row + 1):
+                        mutualInicioCell = wb.cell(row=row, column=mutualInicioCell.column)
+                        mutualInicio = mutualInicioCell.value
+                        
+                        anio2018 = mutualInicioCell.offset(column=1).value
+                        anio2019 = mutualInicioCell.offset(column=2).value
+                        anio2020 = mutualInicioCell.offset(column=3).value
+                        anio2021 = mutualInicioCell.offset(column=4).value
+                        anio2022 = mutualInicioCell.offset(column=5).value
+
+                        mutuales.append({
+                            "Mutualidades": mutualInicio,
+                            "2018": anio2018,
+                            "2019": anio2019,
+                            "2020": anio2020,
+                            "2021": anio2021,
+                            "2022": anio2022
+                        })
+                    data[category]['Mutuales'] = mutuales
+                        
+                for category, categoryInfo in data.items():
+                    print(category)
+                    for i, mutualInicio in enumerate(categoryInfo['Mutuales']):
+                        print(f"mutuales: {mutualInicio['Mutualidades']}")
+                        print(f"2018: {mutualInicio['2018']}")
+                        print(f"2019: {mutualInicio['2019']}")
+                        print(f"2020: {mutualInicio['2020']}")
+                        print(f"2021: {mutualInicio['2021']}")
+                        print(f"2022: {mutualInicio['2022']}")
+                    print()
 def getFileYear(fileName):
     decodedFileName = fileName.encode('utf-8').decode('utf-8')
     cleanedFileName = unidecode.unidecode(decodedFileName)
