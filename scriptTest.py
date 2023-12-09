@@ -27,6 +27,8 @@ def downloadExcelFiles(url, downloadDir):
     
     downloadedFiles = []
     
+    downloadedFilesList = [filename for _, filename in downloadedFiles]
+    
     if table:
         # Find all rows in the table
         rows = table.find_all('tr')
@@ -41,18 +43,20 @@ def downloadExcelFiles(url, downloadDir):
                     title = link.get('title', '')
                     if downloadUrl.endswith('.xlsx') and 'Seguridad Social' in title:
                         fullUrl = urljoin(url, downloadUrl)
-                        
+                        #limpieza 
                         newName = f"{title.replace(' ', '_')}download.xlsx"
                         filePath = os.path.join(downloadDir, newName)
                       
-                        filePath = filePath.replace('Ã', 'A').replace('Â', '')
-
-
-                        with open(filePath, 'wb') as file:
-                            file.write(requests.get(fullUrl).content)
+                        filePath = filePath.encode('utf-8').decode('latin-1')
+                        
+                        if newName not in downloadedFilesList:
+                            with open(filePath, 'wb') as file:
+                                file.write(requests.get(fullUrl).content)
                             
-                        downloadedFiles.append((title, filePath))
-                        print(f"Download: {newName}")
+                            downloadedFiles.append((title, filePath))
+                            print(f"Download: {newName}")
+                        else:
+                            print(f"Skipped download for {newName}. File already exists / El archivo ya existe.")
     return downloadedFiles     
     
 def extractedDataFromExcel_Type1(filePath):  
@@ -377,7 +381,7 @@ def extractedDataFromExcel_Type2(filePath, extracted_year):
        
        workbook = openpyxl.load_workbook(filePath)
        sheetsToProcess = ['33', '40', ]
-       sheetsToProcess2014 = ['34',]
+       sheetsToProcess2014 = ['34','30',]
        sheetsToProcess2015 = ['37', '31']
        #heres where basd on the param extracted_year the logic decides what
        #excel sheet to use    
@@ -392,16 +396,20 @@ def extractedDataFromExcel_Type2(filePath, extracted_year):
                 print(f"switched to sheet: {wb.title}")
 
                 if sheet == '40':
+                    print("processing logic for: NÚMERO DE FALLECIDOS POR ACCIDENTES DEL TRABAJO SEGÚN TIPO DE ACCIDENTE,  ACTIVIDAD ECONÓMICA Y ORGANISMO ADMINISTRADOR")
                     processingLogicForSheet40(wb)
 
                 elif sheet == '34' and int(extracted_year) == 2014:
-                    print("processing sheet 34 for the year 2014")
+                    print("processing logic for: NÚMERO DE FALLECIDOS POR ACCIDENTES DEL TRABAJO, SEGÚN TIPO DE ACCIDENTE,  ACTIVIDAD ECONÓMICA Y ORGANISMO ADMINISTRADOR")
                     processingLogicForSheet40In2014(wb)
+                elif sheet == '30' and extracted_year == 2014:
+                    print("processign logic for: NÚMERO PROMEDIO DE DÍAS PERDIDOS POR CADA ACCIDENTES DEL TRABAJO Y DE TRAYECTO, SEGÚN ACTIVIDAD ECONÓMICA Y MUTUAL")
+                    processLogicForSheet31In2014(wb)
                 elif sheet == '37' and int(extracted_year) == 2015:
-                    print("processing logic for sheet 37 for the year 2015")
+                    print("processing logic for: NÚMERO DE FALLECIDOS POR ACCIDENTES DEL TRABAJO, SEGÚN TIPO DE ACCIDENTE,  ACTIVIDAD ECONÓMICA Y ORGANISMO ADMINISTRADOR")
                     processingLogicForSheet40In2015(wb)
                 elif sheet == '31' and int(extracted_year) == 2015:
-                    print("processign logic for sheet 31 in 2015")
+                    print("processign logic for: NÚMERO PROMEDIO DE DÍAS PERDIDOS POR CADA ACCIDENTES DEL TRABAJO Y DE TRAYECTO, SEGÚN ACTIVIDAD ECONÓMICA Y MUTUAL ")
                     processigLogicForSheet31In2015(wb)
                 else:
                     categoryData = {
@@ -773,7 +781,73 @@ def processigLogicForSheet31In2015(wb):
                     
                     print(additionalValuesStr.replace(", ", ",\n"))
                     print()
+def processLogicForSheet31In2014(wb):
+        categoryData = {
+            "ACCIDENTES DEL TRABAJO": {
+                    "economicActivityStart":'B10',   
+                    "economicActivityEnd": 'B20',
+                    "totalColumn": 'G',
+                    "additionalValuesColumns": [ 'H', 'J', 'K', 'L'],
+            },
+            "ACCIDENTES DEL TRAYECTO":{
+                    "economicActivityStart": 'B22',
+                    "economicActivityEnd": 'B32',
+                    "totalColumn": 'G',
+                    "additionalValuesColumns": [  'H', 'J', 'K', 'L'],
+            },
+            "ACCIDENTES (TRABAJO + TRAYECTO)": {
+                "economicActivityStart": 'B34',
+                "economicActivityEnd": 'B44',
+                "additionalValuesColumns": ['H', 'J', 'K', 'L'],
+                "totalColumn": 'G',
+            }
+        }        
+        data = {}  
+        for category, categoryInfo in categoryData.items():
+            data[category] = {}
+            
+            economicActivityStart = wb[categoryInfo['economicActivityStart']]
+            economicActivityEnd = wb[categoryInfo['economicActivityEnd']]
+            totalColumn = categoryInfo['totalColumn']
+            economicActivities = []
+
+            for row in range(economicActivityStart.row, economicActivityEnd.row + 1):
+                economic_activity_cell = wb.cell(row=row, column=economicActivityStart.column)
+                economicActivity = economic_activity_cell.value
+                        
+                achs_value = economic_activity_cell.offset(column=1).value
+                cchc_value = economic_activity_cell.offset(column=2).value
+                ist_value = economic_activity_cell.offset(column=3).value
+                totalValue = wb[f"{totalColumn}{row}"].value 
+                
+                additionalValues = [wb[f"{col_letter}{row}"].value for col_letter in categoryInfo.get("additionalValuesColumns", [])]
+                        
+                economicActivities.append({
+                    "Economic Activity": economicActivity,
+                    "ACHS": achs_value,
+                    "CCHC": cchc_value,
+                    "IST": ist_value,
+                    "TOTAL": totalValue,
+                    "Additional Values": additionalValues,
+                })
+            data[category]['Economic Activities'] = economicActivities
+
+        for category, categoryInfo in data.items():
+                print(category)
+                for economic_activity in categoryInfo['Economic Activities']:
+                    print(f"Economic Activity: {economic_activity['Economic Activity']}")
+                    print(f"ACHS: {economic_activity['ACHS']}")
+                    print(f"CCHC: {economic_activity['CCHC']}")
+                    print(f"IST: {economic_activity['IST']}")
+                    print(f"Total: {economic_activity['TOTAL']}")
                     
+                    #Formato pa valores adicionales / format for the additional vlues
+                    additionalValuesLabels = ['ACHS', 'CCHC', "IST", "TOTAL"]
+                    additionalValuesStr = ", ".join([f"{label}: {value}" for label, value in zip(additionalValuesLabels, economic_activity['Additional Values'])])
+                    
+                    
+                    print(additionalValuesStr.replace(", ", ",\n"))
+                    print()
                     
                     
                     
