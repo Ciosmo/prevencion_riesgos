@@ -383,7 +383,7 @@ def extractedDataFromExcel_Type2(filePath, extracted_year):
        #33 NÚMERO PROMEDIO DE DÍAS PERDIDOS POR CADA ACCIDENTES DEL TRABAJO Y DE TRAYECTO SEGÚN ACTIVIDAD ECONÓMICA Y MUTUALIDADES
        #40 NÚMERO DE FALLECIDOS POR ACCIDENTES DEL TRABAJO SEGÚN TIPO DE ACCIDENTE,  ACTIVIDAD ECONÓMICA Y ORGANISMO ADMINISTRADOR
        #no usable'31' numero promedio de dias para todos los archivos bajo 2022. originalmente es la sheet 29 de la function type 1
-       sheetsToProcess = ['33', '40', '41','30'] 
+       sheetsToProcess = ['33', '40', '41','30', '25'] 
        sheetsToProcess2014 = ['34','30', '28']
        sheetsToProcess2015 = ['37', '31', '28']
        #heres where basd on the param extracted_year the logic decides what
@@ -404,6 +404,12 @@ def extractedDataFromExcel_Type2(filePath, extracted_year):
                 elif sheet == '41':
                     print("processing logic for: NÚMERO DE FALLECIDOS POR ACCIDENTES DEL TRABAJO EN MUTUALIDADES E ISL SEGÚN TIPO DE ACCIDENTE, ACTIVIDAD ECONÓMICA Y SEXO")
                     processingLogicForSheet41(wb)
+                elif sheet == '25':
+                    if extracted_year != 2016:
+                        print("processing logic for:NÚMERO DE ACCIDENTES DEL TRABAJO, DE TRAYECTO Y DE ENFERMEDADES PROFESIONALES SEGÚN REGIÓN Y MUTUALIDADES ")
+                        processingLogicForSheet25(wb)
+                    else:
+                        processingLogicForSheet25v2(wb)
                 elif sheet == '30':
                     if extracted_year != 2016:
                         print("processing logic for:TASAS DE ACCIDENTABILIDAD POR ACCIDENTES DEL TRABAJO Y DE TRAYECTO SEGÚN ACTIVIDAD ECONÓMICA Y MUTUALIDADES ")
@@ -1117,7 +1123,136 @@ def processLogicForSheet30In2014(wb):
                                 
                                 print(additionalValuesStr.replace(", ", ",\n"))
                                 print()
+def processingLogicForSheet25(wb):
+    categoryData = {
+        "ACCIDENTES DEL TRABAJO":{
+            "regionStart": 'B9',
+            "regionEnd": 'B25',
+            "totalColumn": 'F'
+        },
+        "ACCIDENTES DEL TRAYECTO":{
+            "regionStart": 'B27',
+            "regionEnd": 'B43',
+            "totalColumn": 'F'
+        },
+        "ACCIDENTES (TRABAJO + TRAYECTO)": {
+            "regionStart": 'B45',
+            "regionEnd": 'B61',
+            "totalColumn": 'F'
+        },
+        "ENFERMEDADES PROFESIONALES": {
+            "regionStart": 'B63',
+            "regionEnd": 'B79',
+            "totalColumn": 'F'
+        }
+    }
+    data = {}
 
+    for category, categoryInfo in categoryData.items():
+        data[category] = {}
+
+        regionStart = wb[categoryInfo['regionStart']]
+        regionEnd = wb[categoryInfo['regionEnd']]
+        totalColumn = categoryInfo['totalColumn']
+
+        regionActivities = []
+        totalValues = []
+
+        for row in range (regionStart.row, regionEnd.row + 1):
+            regionStartCell = wb.cell(row=row,column=regionStart.column)
+            regionActivity = regionStartCell.value
+
+            achsValue = regionStartCell.offset(column=1).value
+            musegValue = regionStartCell.offset(column=2).value
+            istValue = regionStartCell.offset(column=3).value
+            totalValue = wb[f"{totalColumn}{row}"].value
+
+            regionActivities.append({
+                "Activity region": regionActivity,
+                "ACHS": achsValue,
+                "MUSEG": musegValue,
+                "IST": istValue
+            })
+            totalValues.append(totalValue)
+
+        data[category]['Total'] = totalValues
+        data[category]['Region Activities'] = regionActivities
+
+    for category, categoryInfo in data.items():
+        print(category)
+        for i, regionActivity in enumerate(categoryInfo['Region Activities']):
+            print(f"Activity region: {regionActivity['Activity region']}")
+            print(f"ACHS: {regionActivity['ACHS']}")
+            print(f"MUSEG: {regionActivity['MUSEG']}")
+            print(f"IST: {regionActivity['IST']}")
+            print(f"Total: {categoryInfo['Total'][i]}")
+        print()   
+        
+def processingLogicForSheet25v2(wb):
+    categoryData = {
+        "ACCIDENTES DEL TRABAJO":{
+            "regionStart": 'B9',
+            "regionEnd": 'B25',
+            "totalColumn": 'F'
+        },
+        "ACCIDENTES DEL TRAYECTO":{
+            "regionStart": 'B27',
+            "regionEnd": 'B43',
+            "totalColumn": 'F'
+        },
+        "ACCIDENTES (TRABAJO + TRAYECTO)": {
+            "regionStart": 'B45',
+            "regionEnd": 'B61',
+            "totalColumn": 'F'
+        },
+        "ENFERMEDADES PROFESIONALES": {
+            "regionStart": 'B63',
+            "regionEnd": 'B79',
+            "totalColumn": 'F'
+        }
+    }
+    data = {}
+
+    for category, categoryInfo in categoryData.items():
+        data[category] = {}
+
+        regionStart = wb[categoryInfo['regionStart']]
+        regionEnd = wb[categoryInfo['regionEnd']]
+        totalColumn = categoryInfo['totalColumn']
+
+        regionActivities = []
+        totalValues = []
+
+        for row in range (regionStart.row, regionEnd.row + 1):
+            regionStartCell = wb.cell(row=row,column=regionStart.column)
+            regionActivity = regionStartCell.value
+
+            achsValue = regionStartCell.offset(column=1).value
+            musegValue = regionStartCell.offset(column=2).value
+            istValue = regionStartCell.offset(column=3).value
+            totalValue = wb[f"{totalColumn}{row}"].value
+
+            regionActivities.append({
+                "Activity region": regionActivity,
+                "ACHS": achsValue,
+                "MUSEG": musegValue,
+                "IST": istValue
+            })
+            totalValues.append(totalValue)
+
+        data[category]['Total'] = totalValues
+        data[category]['Region Activities'] = regionActivities
+
+    for category, categoryInfo in data.items():
+        print(category)
+        for i, regionActivity in enumerate(categoryInfo['Region Activities']):
+            print(f"Activity region: {regionActivity['Activity region']}")
+            print(f"ACHS: {regionActivity['ACHS']}")
+            print(f"MUSEG: {regionActivity['MUSEG']}")
+            print(f"IST: {regionActivity['IST']}")
+            print(f"Total: {categoryInfo['Total'][i]}")
+        print()
+        
 def getFileYear(fileName):
     decodedFileName = fileName.encode('utf-8').decode('utf-8')
     cleanedFileName = unidecode.unidecode(decodedFileName)
