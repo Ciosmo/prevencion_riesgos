@@ -374,18 +374,12 @@ def extractedDataFromExcel_Type2(filePath, extracted_year):
        print(f"archivo procesado: {filePath}")
        
        workbook = openpyxl.load_workbook(filePath)
-<<<<<<< HEAD
        #33 NÚMERO PROMEDIO DE DÍAS PERDIDOS POR CADA ACCIDENTES DEL TRABAJO Y DE TRAYECTO SEGÚN ACTIVIDAD ECONÓMICA Y MUTUALIDADES
        #40 NÚMERO DE FALLECIDOS POR ACCIDENTES DEL TRABAJO SEGÚN TIPO DE ACCIDENTE,  ACTIVIDAD ECONÓMICA Y ORGANISMO ADMINISTRADOR
        #no usable'31' numero promedio de dias para todos los archivos bajo 2022. originalmente es la sheet 29 de la function type 1
        sheetsToProcess = ['33', '40', '41','30', '25'] 
        sheetsToProcess2014 = ['34','30', '28']
        sheetsToProcess2015 = ['37', '31', '28']
-=======
-       sheetsToProcess = ['33', '40', ]
-       sheetsToProcess2014 = ['34','30',]
-       sheetsToProcess2015 = ['37', '31']
->>>>>>> parent of 07dc23f (added new logic for different sheets)
        #heres where basd on the param extracted_year the logic decides what
        #excel sheet to use    
        if extracted_year == 2014:
@@ -401,7 +395,6 @@ def extractedDataFromExcel_Type2(filePath, extracted_year):
                 if sheet == '40':
                     print("processing logic for: NÚMERO DE FALLECIDOS POR ACCIDENTES DEL TRABAJO SEGÚN TIPO DE ACCIDENTE,  ACTIVIDAD ECONÓMICA Y ORGANISMO ADMINISTRADOR")
                     processingLogicForSheet40(wb)
-<<<<<<< HEAD
                 elif sheet == '41':
                     print("processing logic for: NÚMERO DE FALLECIDOS POR ACCIDENTES DEL TRABAJO EN MUTUALIDADES E ISL SEGÚN TIPO DE ACCIDENTE, ACTIVIDAD ECONÓMICA Y SEXO")
                     processingLogicForSheet41(wb)
@@ -423,9 +416,6 @@ def extractedDataFromExcel_Type2(filePath, extracted_year):
                     print("processing logic for:TASAS DE ACCIDENTABILIDAD POR ACCIDENTES DEL TRABAJO Y DE TRAYECTO, SEGÚN ACTIVIDAD ECONÓMICA Y MUTUAL ")
                     processLogicForSheet30In2014(wb)
                         
-=======
-
->>>>>>> parent of 07dc23f (added new logic for different sheets)
                 elif sheet == '34' and int(extracted_year) == 2014:
                     print("processing logic for: NÚMERO DE FALLECIDOS POR ACCIDENTES DEL TRABAJO, SEGÚN TIPO DE ACCIDENTE,  ACTIVIDAD ECONÓMICA Y ORGANISMO ADMINISTRADOR")
                     processingLogicForSheet40In2014(wb)
@@ -592,19 +582,19 @@ def processingLogicForSheet31(wb):
                         mutualInicioCell = wb.cell(row=row, column=mutualInicioCell.column)
                         mutualInicio = mutualInicioCell.value
                         
-                        anio2018 = mutualInicioCell.offset(column=1).value
-                        anio2019 = mutualInicioCell.offset(column=2).value
-                        anio2020 = mutualInicioCell.offset(column=3).value
-                        anio2021 = mutualInicioCell.offset(column=4).value
-                        anio2022 = mutualInicioCell.offset(column=5).value
+                        anio2017 = mutualInicioCell.offset(column=1).value
+                        anio2018 = mutualInicioCell.offset(column=2).value
+                        anio2019 = mutualInicioCell.offset(column=3).value
+                        anio2020 = mutualInicioCell.offset(column=4).value
+                        anio2021 = mutualInicioCell.offset(column=5).value
 
                         mutuales.append({
                             "Mutualidades": mutualInicio,
+                            "2017": anio2017,
                             "2018": anio2018,
                             "2019": anio2019,
                             "2020": anio2020,
-                            "2021": anio2021,
-                            "2022": anio2022
+                            "2021": anio2021
                         })
                     data[category]['Mutuales'] = mutuales
                         
@@ -612,11 +602,11 @@ def processingLogicForSheet31(wb):
                     print(category)
                     for i, mutualInicio in enumerate(categoryInfo['Mutuales']):
                         print(f"mutuales: {mutualInicio['Mutualidades']}")
-                        print(f"2018: {mutualInicio['2018']}")
-                        print(f"2019: {mutualInicio['2019']}")
-                        print(f"2020: {mutualInicio['2020']}")
-                        print(f"2021: {mutualInicio['2021']}")
-                        print(f"2022: {mutualInicio['2022']}")
+                        print(f"2018: {mutualInicio['2017']}")
+                        print(f"2019: {mutualInicio['2018']}")
+                        print(f"2020: {mutualInicio['2019']}")
+                        print(f"2021: {mutualInicio['2020']}")
+                        print(f"2022: {mutualInicio['2021']}")
                     print()                   
 def processingLogicForSheet40In2014(wb):
     print("custom logic for the page 34 in 2014")
@@ -875,10 +865,189 @@ def processLogicForSheet31In2014(wb):
                     
                     print(additionalValuesStr.replace(", ", ",\n"))
                     print()
+def processLogicForSheet29(wb):
+                print()
+                categoryData = {
+                    "ACCIDENTES DEL TRABAJO": {
+                        "mutualInicio": "B8",
+                        "mutualFinal": "B11",
+
+                    },
+                    "ACCIDENTES DE TRAYECTO": {
+                        "mutualInicio": "B13",
+                        "mutualFinal": "B16",
+                        
+                    },
+                    "POR ACCIDENTES (TRABAJO + TRAYECTO)": {
+                        "mutualInicio": "B18",
+                        "mutualFinal": "B21",
+                    
+                    }
+                }
+                data = {}
+
+                for category, categoryInfo in categoryData.items():
+                    data[category] = {}
+                    
+                    mutualInicioCell = wb[categoryInfo["mutualInicio"]]
+                    mutualFinalCell = wb[categoryInfo["mutualFinal"]]
+                    
+        
+                    
+                    mutuales = []
+
+                    for row in range(mutualInicioCell.row, mutualFinalCell.row + 1):
+                        mutualInicioCell = wb.cell(row=row, column=mutualInicioCell.column)
+                        mutualInicio = mutualInicioCell.value
+                        
+                        anio2017 = mutualInicioCell.offset(column=1).value
+                        anio2018 = mutualInicioCell.offset(column=2).value
+                        anio2019 = mutualInicioCell.offset(column=3).value
+                        anio2020 = mutualInicioCell.offset(column=4).value
+                        anio2021 = mutualInicioCell.offset(column=5).value
+
+                        mutuales.append({
+                            "Mutualidades": mutualInicio,
+                            "2018": anio2017,
+                            "2019": anio2018,
+                            "2020": anio2019,
+                            "2021": anio2020,
+                            "2022": anio2021
+                        })
+                    data[category]['Mutuales'] = mutuales
+                        
+                for category, categoryInfo in data.items():
+                    print(category)
+                    for i, mutualInicio in enumerate(categoryInfo['Mutuales']):
+                        print(f"mutuales: {mutualInicio['Mutualidades']}")
+                        print(f"2018: {mutualInicio['2018']}")
+                        print(f"2019: {mutualInicio['2019']}")
+                        print(f"2020: {mutualInicio['2020']}")
+                        print(f"2021: {mutualInicio['2021']}")
+                        print(f"2022: {mutualInicio['2022']}")
+                    print()                   
+def processingLogicForSheet41(wb):
+    print(f"custom logic for sheet: {wb.title}")
+    categoryData={
+        "ACCIDENTES DEL TRABAJO": {
+            "economicActivityStart": 'B8',
+            "economicActivityEnd": 'B24',
+            "totalColumn": 'E'
+        },
+        "ACCIDENTES DE TRAYECTO":{
+            "economicActivityStart": 'B26',
+            "economicActivityEnd": 'B42',
+            "totalColumn": 'E'
+        },
+        "ACCIDENTES (TRABAJO + TRAYECTO)":{
+            "economicActivityStart": 'B44',
+            "economicActivityEnd": 'B60',
+            "totalColumn": 'E'
+        }
+    }
+    data = {}
+
+    for category, categoryInfo in categoryData.items():
+        data[category] = {}
+
+        economicActivityStart = wb[categoryInfo['economicActivityStart']]
+        economicActivityEnd = wb[categoryInfo['economicActivityEnd']]
+        totalColumn = categoryInfo['totalColumn']
+
+        economicActivities = []
+        totalValues = []
+
+        for row in range (economicActivityStart.row, economicActivityEnd.row + 1):
+            economicActivityCell = wb.cell(row=row,column=economicActivityStart.column)
+            economicActivity = economicActivityCell.value
+
+            menValue = economicActivityCell.offset(column=1).value
+            womenValue = economicActivityCell.offset(column=2).value
+            totalValue = wb[f"{totalColumn}{row}"].value
+
+            economicActivities.append({
+                "Economic Activity": economicActivity,
+                "MEN": menValue,
+                "WOMEN": womenValue,
+            })
+            totalValues.append(totalValue)
+
+        data[category]['Total'] = totalValues
+        data[category]['Economic Activities'] = economicActivities
+
+    for category, categoryInfo in data.items():
+        print(category)
+        for i, economicActivity in enumerate(categoryInfo['Economic Activities']):
+            print(f"Economic activity: {economicActivity['Economic Activity']}")
+            print(f"MEN: {economicActivity['MEN']}")
+            print(f"WOMEN: {economicActivity['WOMEN']}")
+            print(f"Total: {categoryInfo['Total'][i]}")
+        print()      
+def processLogicForSheet30(wb):
+        categoryData = {
+            "ACCIDENTES DEL TRABAJO": {
+                    "economicActivityStart":'B10',   
+                    "economicActivityEnd": 'B27',
+                    "totalColumn": 'F',
+                    "additionalValuesColumns": ['G', 'H', 'I', 'J'],
+            },
+            "ACCIDENTES DEL TRAYECTO":{
+                    "economicActivityStart": 'B29',
+                    "economicActivityEnd": 'B46',
+                    "totalColumn": 'F',
+                    "additionalValuesColumns": ['G', 'H', 'I', 'J'],
+            },
+            "ACCIDENTES (TRABAJO + TRAYECTO)": {
+                "economicActivityStart": 'B48',
+                "economicActivityEnd": 'B65',
+                "additionalValuesColumns": ['G', 'H', 'I', 'J'],
+                "totalColumn": 'F',
+            }
+        }        
+        data = {}  
+        for category, categoryInfo in categoryData.items():
+            data[category] = {}
+            
+            economicActivityStart = wb[categoryInfo['economicActivityStart']]
+            economicActivityEnd = wb[categoryInfo['economicActivityEnd']]
+            totalColumn = categoryInfo['totalColumn']
+            economicActivities = []
+
+            for row in range(economicActivityStart.row, economicActivityEnd.row + 1):
+                economic_activity_cell = wb.cell(row=row, column=economicActivityStart.column)
+                economicActivity = economic_activity_cell.value
+                        
+                achs_value = economic_activity_cell.offset(column=1).value
+                museg_value = economic_activity_cell.offset(column=2).value
+                ist_value = economic_activity_cell.offset(column=3).value
+                totalValue = wb[f"{totalColumn}{row}"].value 
+                
+                additionalValues = [wb[f"{col_letter}{row}"].value for col_letter in categoryInfo.get("additionalValuesColumns", [])]
+                        
+                economicActivities.append({
+                    "Economic Activity": economicActivity,
+                    "ACHS": achs_value,
+                    "MUSEG": museg_value,
+                    "IST": ist_value,
+                    "TOTAL": totalValue,
+                    "Additional Values": additionalValues,
+                })
+            data[category]['Economic Activities'] = economicActivities
+
+        for category, categoryInfo in data.items():
+                print(category)
+                for economic_activity in categoryInfo['Economic Activities']:
+                    print(f"Economic Activity: {economic_activity['Economic Activity']}")
+                    print(f"ACHS: {economic_activity['ACHS']}")
+                    print(f"MUSEG: {economic_activity['MUSEG']}")
+                    print(f"IST: {economic_activity['IST']}")
+                    print(f"Total: {economic_activity['TOTAL']}")
+                    
+                    #Formato pa valores adicionales / format for the additional vlues
+                    additionalValuesLabels = ['ACHS', 'MUSEG', "IST", "TOTAL"]
+                    additionalValuesStr = ", ".join([f"{label}: {value}" for label, value in zip(additionalValuesLabels, economic_activity['Additional Values'])])
                     
                     
-                    
-<<<<<<< HEAD
                     print(additionalValuesStr.replace(", ", ",\n"))
                     print()
 def processLogicForSheet30In2014(wb):
@@ -1080,8 +1249,6 @@ def processingLogicForSheet25v2(wb):
 
 
     
-=======
->>>>>>> parent of 07dc23f (added new logic for different sheets)
 def getFileYear(fileName):
     #decodedFileName = fileName.encode('utf-8').decode('utf-8')
     cleanedFileName = unidecode(fileName)
@@ -1094,7 +1261,8 @@ def getFileYear(fileName):
  
 def is_2022_file(fileName):
     
-    cleanedFileName = unidecode.unidecode(fileName)
+    #cleanedFileName = unidecode.unidecode(fileName)
+    cleanedFileName = unidecode(fileName)
     pattern = re.compile(r'2022', re.IGNORECASE)
     result =  re.search(pattern, cleanedFileName) is not None
     print(f"Original File Name: {fileName}")
