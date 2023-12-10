@@ -6,7 +6,7 @@ import unidecode
 
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin
-
+from unidecode import unidecode
 """
 1) Identificar correctamente el elemento(s) que contienen 
 informacion deseada
@@ -17,18 +17,20 @@ informacion deseada
     <a href="articles-708568_archivo_01.xlsx" title="Ir a Estadísticas de la Seguridad Social 2022" download="Estadísticas de la Seguridad Social 2022.pdf">Estadísticas de la Seguridad Social 2022</a>
 
 """
-def load_downloaded_files(recordFile):
-    try:
-        with open(recordFile, 'r', encoding='utf-8') as file:
-            downloadedFiles = [tuple(line.strip().split(',')) for line in file.readlines()]
-        return downloadedFiles
-    except FileNotFoundError:
-        return []
+def load_downloaded_files(filename):
+    if os.path.exists(filename):
+        with open(filename, 'r') as file:
+            return [tuple(line.strip().split(',')) for line in file.readlines()]
+    return []
+from unidecode import unidecode
 
-def save_downloaded_files(recordFile, downloadedFiles):
-    with open(recordFile, 'w', encoding='utf-8') as file:
+def save_downloaded_files(filename, downloadedFiles):
+    with open(filename, 'w', encoding='utf-8') as file:
         for title, filePath in downloadedFiles:
-            file.write(f"{title},{filePath}\n")
+            cleaned_title = unidecode(title)
+            file.write(f"{cleaned_title},{filePath}\n")
+
+
 
 
 
@@ -64,7 +66,7 @@ def downloadExcelFiles(url, downloadDir, recordFile='downloadedFiles.txt'):
                         filePath = os.path.join(downloadDir, newName)
                 
                         
-                        if not os.path.isfile(filePath):
+                        if filePath not in [file[1] for file in downloadedFiles]:
                             with open(filePath, 'wb') as file:
                                 file.write(requests.get(fullUrl).content)
                             
@@ -1268,7 +1270,9 @@ def processingLogicForSheet25v2(wb):
             print(f"IST: {regionActivity['IST']}")
             print(f"Total: {categoryInfo['Total'][i]}")
         print()
-        
+
+
+    
 def getFileYear(fileName):
     decodedFileName = fileName.encode('utf-8').decode('utf-8')
     cleanedFileName = unidecode.unidecode(decodedFileName)
@@ -1278,7 +1282,7 @@ def getFileYear(fileName):
         print(f"Extracted year: {year}")
         return year
     return None
-
+ 
 def is_2022_file(fileName):
     
     cleanedFileName = unidecode.unidecode(fileName)
