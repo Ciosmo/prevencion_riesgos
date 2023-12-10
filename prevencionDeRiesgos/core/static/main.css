@@ -77,16 +77,28 @@ nav ul li a:hover{
 .content {
     padding: 50px;
     flex: 1;
+    background-image: url("/static/fondo.jpg");
+    background-size: cover;
 }
 
 .content p{
     text-align: center;
-    margin: 225px;
-    font-size: x-large;
+    margin-top: 150px;
+    margin-left: 300px;
+    margin-right: 300px;
+    margin-bottom: 200px;
+    padding: 30px;
+    font-size: xx-large;
+    text-decoration: solid;
 }
 
 .accordion{
-    margin: 50px auto;
+    margin: 30px auto;
+    width: 1400px;
+}
+
+.accordion ul{
+    margin: 30px auto;
     width: 1300px;
 }
 
@@ -208,12 +220,12 @@ nav ul li a:hover{
 
 
 /* Estilos para pantallas más pequeñas (responsive) */
-@media screen and (max-width: 750px) {
+@media screen and (max-width: 795px) {
 
     .logo img {
         height: 50px;
         width: auto;
-        padding-left: 50px;
+        padding-left: 60px;
     }
 
     nav ul li a{
@@ -224,6 +236,11 @@ nav ul li a:hover{
     .checkbtn{
         display: block;
     }
+    
+    .header{
+        position: fixed;
+        width: 100%;
+    }
 
     nav{
         width: 100%;
@@ -231,8 +248,9 @@ nav ul li a:hover{
 
     nav ul{
         position: fixed;
+        z-index: 1000;
         width: 70%;
-        height: 100vh;
+        height: 120vh;
         background: rgb(85, 84, 84);
         top: 80px;
         left: -115%;
@@ -264,7 +282,7 @@ nav ul li a:hover{
 
     .content {
         padding: 10px;
-        padding-top: 20px;
+        padding-top: 100px;
         padding-bottom: 20px;
         flex: 1;
     }
@@ -322,5 +340,29 @@ nav ul li a:hover{
         padding: 10px;
         font-size: small;
         width: 100%;
+    }
+}
+
+@media screen and (max-width: 830px) {
+
+    .accidentes-table {
+        overflow-x: auto;
+        display: block;
+    }
+
+    .accidentes-table th, .accidentes-table td {
+        white-space: nowrap;
+        max-width: 110px;
+        max-height: 100px;
+        font-size: small;
+    }
+
+    .accidentes-table th{
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .accidentes-table td {
+        word-wrap: break-word;
     }
 }

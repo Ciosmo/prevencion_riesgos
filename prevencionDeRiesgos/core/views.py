@@ -1,4 +1,4 @@
-from core.models import EconomicActivity, Mutualidad, Tasa_Eco_Act, Sexo, AccidenteLaboral
+from core.models import DiasxActividad, DiasxMut, TasaxAct, AccidentesxSexo, AccidenteLaboral, EconomicActivity
 from django.contrib.auth.models import User
 from django.contrib import messages
 from django.contrib.auth import get_user_model
@@ -24,18 +24,42 @@ def registrar_accidente(request):
         if form.is_valid():
             form.save()
             
-            return redirect('home')  
+            return redirect('datosform')  
     else:
         form = AccidenteForm()
 
     return render(request, 'Formulario.html', {'form': form})
 
+def ver_datos_relacionados(request, accidente_id):
+    # Obtener el objeto AccidenteLaboral
+    accidente_laboral = AccidenteLaboral.objects.get(pk=accidente_id)
+
+    # Acceder a la actividad económica del AccidenteLaboral
+    actividad_economica = accidente_laboral.actividad_economica
+
+    # Buscar datos relacionados en la tabla DiasxActividad
+    try:
+        economic_activity = EconomicActivity.objects.get(activity_name=actividad_economica)
+        dias_actividad = DiasxActividad.objects.get(
+            category=accidente_laboral.category,
+            EconomicActivity=economic_activity,
+        )
+
+        # Realizar más acciones según sea necesario...
+
+        # Renderizar la página con los datos relacionados
+        return render(request, 'ver_datos_relacionados.html', {'dias_actividad': dias_actividad})
+
+    except EconomicActivity.DoesNotExist:
+        # Manejar el caso si la actividad económica no existe
+        return render(request, 'actividad_no_encontrada.html')
+
 def grafico(request, categoria_id=1):
     # Obtener los datos de tu base de datos
-    datos_eco = EconomicActivity.objects.all()
-    datos_mut = Mutualidad.objects.all()
-    datos_tasa_eco_act = Tasa_Eco_Act.objects.all()
-    datos_sexo = Sexo.objects.all()
+    datos_eco = DiasxActividad.objects.all()
+    datos_mut = DiasxMut.objects.all()
+    datos_tasa_eco_act = TasaxAct.objects.all()
+    datos_sexo = AccidentesxSexo.objects.all()
 
     # Crear un DataFrame con los datos de Mutualidad
     df_mut = pd.DataFrame(list(datos_mut.values()))
@@ -59,55 +83,110 @@ def grafico(request, categoria_id=1):
         else:
             return 'Accidente de Trabajo + Trayecto'
     
-    df_mut['Categoria'] = df_mut.apply(asignar_categoria, axis=1)
-    df_eco['Categoria'] = df_eco.apply(asignar_categoria, axis=1)
-    df_tasa_eco_act['Categoria'] = df_tasa_eco_act.apply(asignar_categoria, axis=1)
-    df_sexo['Categoria'] = df_sexo.apply(asignar_categoria, axis=1)
+    df_mut['Categoria'] = df_mut.apply(lambda row: asignar_categoria(row), axis=1)
+    df_eco['Categoria'] = df_eco.apply(lambda row: asignar_categoria(row), axis=1)
+    df_tasa_eco_act['Categoria'] = df_tasa_eco_act.apply(lambda row: asignar_categoria(row), axis=1)
+    df_sexo['Categoria'] = df_sexo.apply(lambda row: asignar_categoria(row), axis=1)
+
+    def asignar_mutualidad(row):
+        if row['mutual_id'] == 1:
+            return 'Asociación Chilena de Seguridad'
+        elif row['mutual_id'] == 2:
+            return 'Mutual de Seguridad C.Ch.C.'
+        elif row['mutual_id'] == 3:
+            return 'Instituto de Seguridad del Trabajo'
+        else:
+            return 'Desconocida'
+
+    df_mut['Mutualidad'] = df_mut.apply(asignar_mutualidad, axis=1)
+
+    def asignar_actividad(row):
+        if row['EconomicActivity_id'] == 1:
+            return 'Agricultura, ganadería, caza y silvicultura'
+        elif row['EconomicActivity_id'] == 2:
+            return 'Pesca'
+        elif row['EconomicActivity_id'] == 3:
+            return 'Explotación de minas y canteras'
+        elif row['EconomicActivity_id'] == 4:
+            return 'Industrias manufactureras'
+        elif row['EconomicActivity_id'] == 5:
+            return 'Suministro de electricidad, gas y agua'
+        elif row['EconomicActivity_id'] == 6:
+            return 'Construcción'
+        elif row['EconomicActivity_id'] == 7:
+            return 'Comercio, reparación de vehículos y otros'
+        elif row['EconomicActivity_id'] == 8:
+            return 'Hoteles y restaurantes'
+        elif row['EconomicActivity_id'] == 9:
+            return 'Transporte, almacenamiento y comunicaciones'
+        elif row['EconomicActivity_id'] == 10:
+            return 'Intermediación financiera'
+        elif row['EconomicActivity_id'] == 11:
+            return 'Actividades inmobiliarias, empresariales y de alquiler'
+        elif row['EconomicActivity_id'] == 12:
+            return 'Administración publica y defensa; planes de seguridad social'
+        elif row['EconomicActivity_id'] == 13:
+            return 'Enseñanza'
+        elif row['EconomicActivity_id'] == 14:
+            return 'Servicios sociales y de salud'
+        elif row['EconomicActivity_id'] == 15:
+            return 'Otras actividades de servicios comunitarios, sociales y personales'
+        elif row['EconomicActivity_id'] == 16:
+            return 'Organizaciones y órganos extraterritoriales'
+        elif row['EconomicActivity_id'] == 17:
+            return 'Hogares privados con servicio doméstico'
+        else:
+            return 'Desconocida'
+        
+    df_eco['Actividad_Economica'] = df_eco.apply(asignar_actividad, axis=1)
+    df_tasa_eco_act['Actividad_Economica'] = df_tasa_eco_act.apply(asignar_actividad, axis=1)
+    df_sexo['Actividad_Economica'] = df_sexo.apply(asignar_actividad, axis=1)
 
 
-    valores_a_eliminar = ['TOTAL ACCIDENTES DEL TRABAJO', 'TOTAL ACCIDENTES DE TRAYECTO', 'TOTAL TRABAJO Y TRAYECTO', 'TOTAL ACCIDENTES (TRABAJO + TRAYECTO)', 'TOTAL ACCIDENTES']
+
+    valores_a_eliminar = ['Desconocida']
 
     # Filtrar el DataFrame para excluir las filas con los valores específicos
-    df_mut = df_mut[~df_mut['mutual'].isin(valores_a_eliminar)]
+    df_mut = df_mut[~df_mut['Mutualidad'].isin(valores_a_eliminar)]
 
-    df_eco = df_eco[~df_eco['name'].isin(valores_a_eliminar)]
+    df_eco = df_eco[~df_eco['Actividad_Economica'].isin(valores_a_eliminar)]
 
-    df_tasa_eco_act = df_tasa_eco_act[~df_tasa_eco_act['name'].isin(valores_a_eliminar)]
+    df_tasa_eco_act = df_tasa_eco_act[~df_tasa_eco_act['Actividad_Economica'].isin(valores_a_eliminar)]
 
-    df_sexo = df_sexo[~df_sexo['name'].isin(valores_a_eliminar)]
+    df_sexo = df_sexo[~df_sexo['Actividad_Economica'].isin(valores_a_eliminar)]
 
 
     #Mutual
 
-    mut1 = px.bar(df_mut, x='mutual', y='anio2018', title=f'Promedio de dias perdidos por Mutualidad segun Año', color='Categoria')
+    mut1 = px.bar(df_mut, x='Mutualidad', y='anio2018', title=f'Promedio de dias perdidos por Mutualidad segun Año', color='Categoria')
 
-    mut2 = px.bar(df_mut, x='mutual', y='anio2019', title=f'Promedio de dias perdidos por Mutualidad segun Año', color='Categoria')
+    mut2 = px.bar(df_mut, x='Mutualidad', y='anio2019', title=f'Promedio de dias perdidos por Mutualidad segun Año', color='Categoria')
 
-    mut3 = px.bar(df_mut, x='mutual', y='anio2020', title=f'Promedio de dias perdidos por Mutualidad segun Año', color='Categoria')
+    mut3 = px.bar(df_mut, x='Mutualidad', y='anio2020', title=f'Promedio de dias perdidos por Mutualidad segun Año', color='Categoria')
 
-    mut4 = px.bar(df_mut, x='mutual', y='anio2021', title=f'Promedio de dias perdidos por Mutualidad segun Año', color='Categoria')
+    mut4 = px.bar(df_mut, x='Mutualidad', y='anio2021', title=f'Promedio de dias perdidos por Mutualidad segun Año', color='Categoria')
 
     #Actividad Economica
 
-    eco1 = px.bar(df_eco, x='name', y='achs', title=f'Promedio de dias perdidos por Actividad Económica segun Mutualidad', color='Categoria')
+    eco1 = px.bar(df_eco, x='Actividad_Economica', y='achs', title=f'Promedio de dias perdidos por Actividad Económica segun Mutualidad', color='Categoria')
 
-    eco2 = px.bar(df_eco, x='name', y='museg', title=f'Promedio de dias perdidos por Actividad Económica segun Mutualidad', color='Categoria')
+    eco2 = px.bar(df_eco, x='Actividad_Economica', y='museg', title=f'Promedio de dias perdidos por Actividad Económica segun Mutualidad', color='Categoria')
 
-    eco3 = px.bar(df_eco, x='name', y='ist', title=f'Promedio de dias perdidos por Actividad Económica segun Mutualidad', color='Categoria')
+    eco3 = px.bar(df_eco, x='Actividad_Economica', y='ist', title=f'Promedio de dias perdidos por Actividad Económica segun Mutualidad', color='Categoria')
 
     #Tasa 
 
-    tea1 = px.bar(df_tasa_eco_act, x='name', y='achs', title=f'Tasa de accidentes por Actividad Económica', color='Categoria')
+    tea1 = px.bar(df_tasa_eco_act, x='Actividad_Economica', y='achs', title=f'Tasa de accidentes por Actividad Económica', color='Categoria')
 
-    tea2 = px.bar(df_tasa_eco_act, x='name', y='museg', title=f'Tasa de accidentes por Actividad Económica', color='Categoria')
+    tea2 = px.bar(df_tasa_eco_act, x='Actividad_Economica', y='museg', title=f'Tasa de accidentes por Actividad Económica', color='Categoria')
 
-    tea3 = px.bar(df_tasa_eco_act, x='name', y='ist', title=f'Tasa de accidentes por Actividad Económica', color='Categoria')
+    tea3 = px.bar(df_tasa_eco_act, x='Actividad_Economica', y='ist', title=f'Tasa de accidentes por Actividad Económica', color='Categoria')
 
     #Sexo
 
-    sexo1 = px.bar(df_sexo, x='name', y='men', title=f'Cantidad de accidentes por Sexo', color='Categoria')
+    sexo1 = px.bar(df_sexo, x='Actividad_Economica', y='men', title=f'Cantidad de accidentes por Sexo', color='Categoria')
 
-    sexo2 = px.bar(df_sexo, x='name', y='women', title=f'Cantidad de accidentes por Sexo', color='Categoria')
+    sexo2 = px.bar(df_sexo, x='Actividad_Economica', y='women', title=f'Cantidad de accidentes por Sexo', color='Categoria')
 
     # Convierte los gráficos en HTML
     plot_div_mut1 = plot(mut1, output_type='div', include_plotlyjs=False)

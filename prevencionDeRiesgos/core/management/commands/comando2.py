@@ -1,11 +1,10 @@
 import requests
-import pandas as pd
 import os
 import openpyxl
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin
 from django.core.management.base import BaseCommand
-from core.models import EconomicActivity, Category, Mutualidad, Tasa_Eco_Act, Sexo
+from core.models import DiasxActividad, DiasxMut, TasaxAct, AccidentesxSexo, Category, EconomicActivity, Mutualidad, Sexo
 
 class Command(BaseCommand):
     help = 'Extraer datos de la pagina SUSESO y guardarlos en la BD'
@@ -95,20 +94,36 @@ class Command(BaseCommand):
                                         data[category]['Total'] = total_values  # Store all "Total" values for each economic activity
                                         data[category]['Economic Activities'] = economicActivities
 
+                                    economic_activities_instances = {}
                                     for category, categoryInfo in data.items():
-                                
+                                        for economic_activity_info in categoryInfo['Economic Activities']:
+                                            activity_name = economic_activity_info['Economic Activity']
+
+                                            # Verificar si ya existe una instancia con el mismo nombre
+                                            economic_activity_instance = economic_activities_instances.get(activity_name)
+                                            if not economic_activity_instance:
+                                                # Si no existe, se crea una nueva instancia y se guarda en el diccionario
+                                                economic_activity_instance, created = EconomicActivity.objects.get_or_create(activity_name=activity_name)
+                                                economic_activities_instances[activity_name] = economic_activity_instance
+
+
+                                    for category, categoryInfo in data.items():
                                         category_instance, created = Category.objects.get_or_create(name=category)
 
                                         for i, economic_activity in enumerate(categoryInfo['Economic Activities']):
-                                            economic_activity_instance = EconomicActivity(
+                                            activity_name = economic_activity['Economic Activity']
+                                            economic_activity_instance = economic_activities_instances[activity_name]
+
+                                            # Crear y guardar la instancia de DiasxActividad
+                                            diasxactividad_instance = DiasxActividad(
                                                 category=category_instance,
-                                                name=economic_activity['Economic Activity'],
+                                                EconomicActivity=economic_activity_instance,
                                                 achs=economic_activity['ACHS'],
                                                 museg=economic_activity['MUSEG'],
                                                 ist=economic_activity['IST'],
                                                 total=total_value
                                             )
-                                            economic_activity_instance.save()
+                                            diasxactividad_instance.save()   
 
                                 if wantedSheet == '29':
                                     print(f"switched to sheet: {ws.title}")
@@ -161,21 +176,39 @@ class Command(BaseCommand):
                                             })
                                         data[category]['Mutuales'] = mutuales
                                             
-                                    for category, categoryInfo in data.items():
 
-                                        category_instance, created = Category.objects.get_or_create(name=category)
-                                        
+                                    mutualidades_instances = {}
+                                    for category, categoryInfo in data.items():
                                         for mutualidad_info in categoryInfo['Mutuales']:
-                                            mutualidad_instance = Mutualidad(
+                                            mutualidad_name = mutualidad_info['Mutualidades']
+
+                                            # Verificar si ya existe una instancia con el mismo nombre
+                                            mutualidad_instance = mutualidades_instances.get(mutualidad_name)
+                                            if not mutualidad_instance:
+                                                # Si no existe, se crea una nueva instancia y se guarda en el diccionario
+                                                mutualidad_instance, created = Mutualidad.objects.get_or_create(mutualidad_name=mutualidad_name)
+                                                mutualidades_instances[mutualidad_name] = mutualidad_instance
+
+
+                                    for category, categoryInfo in data.items():
+                                        category_instance, created = Category.objects.get_or_create(name=category)
+
+                                        for mutualidad_info in categoryInfo['Mutuales']:
+                                            mutualidad_name = mutualidad_info['Mutualidades']
+                                            mutualidad_instance = mutualidades_instances[mutualidad_name]
+
+                                            # Crear y guardar la instancia de DiasxMut
+                                            diasxmut_instance = DiasxMut(
                                                 category=category_instance,
-                                                mutual=mutualidad_info['Mutualidades'],
+                                                mutual=mutualidad_instance,
                                                 anio2018=mutualidad_info['2018'],
                                                 anio2019=mutualidad_info['2019'],
                                                 anio2020=mutualidad_info['2020'],
                                                 anio2021=mutualidad_info['2021'],
                                                 anio2022=mutualidad_info['2022']
                                             )
-                                            mutualidad_instance.save()
+                                            diasxmut_instance.save()
+                                            
                                             
                                 if wantedSheet == '38':
                                     print(f"switched to sheet: {ws.title}")
@@ -231,20 +264,31 @@ class Command(BaseCommand):
                                             
                                         data[category]['Total'] = totalValues
                                         data[category]['Economic Activities'] = economicActivities
+
+                                    tasas_instances = {}
                                     for category, categoryInfo in data.items():
-                                
                                         category_instance, created = Category.objects.get_or_create(name=category)
 
-                                        for i, economic_activity in enumerate(categoryInfo['Economic Activities']):
-                                            economic_activity_instance = Tasa_Eco_Act(
+                                        for economic_activity_info in categoryInfo['Economic Activities']:
+                                            economic_activity_name = economic_activity_info['Economic Activity']
+
+                                            # Verificar si ya existe una instancia con el mismo nombre
+                                            economic_activity_instance = tasas_instances.get(economic_activity_name)
+                                            if not economic_activity_instance:
+                                                # Si no existe, se crea una nueva instancia y se guarda en el diccionario
+                                                economic_activity_instance, created = EconomicActivity.objects.get_or_create(activity_name=economic_activity_name)
+                                                tasas_instances[economic_activity_name] = economic_activity_instance
+
+                                            # Crear y guardar la instancia de TasaxAct
+                                            tasaxAct_instance = TasaxAct(
                                                 category=category_instance,
-                                                name=economic_activity['Economic Activity'],
-                                                achs=economic_activity['ACHS'],
-                                                museg=economic_activity['MUSEG'],
-                                                ist=economic_activity['IST'],
+                                                EconomicActivity=economic_activity_instance,
+                                                achs=economic_activity_info['ACHS'],
+                                                museg=economic_activity_info['MUSEG'],
+                                                ist=economic_activity_info['IST'],
                                                 total=total_value
                                             )
-                                            economic_activity_instance.save()
+                                            tasaxAct_instance.save()
 
                                 if wantedSheet == '39':
                                     print(f"switched to sheet: {ws.title}")
@@ -295,20 +339,30 @@ class Command(BaseCommand):
                                         data[category]['Total'] = totalValues
                                         data[category]['Economic Activities'] = economicActivities
 
+                                    sexos_instances = {}
                                     for category, categoryInfo in data.items():
-                                
                                         category_instance, created = Category.objects.get_or_create(name=category)
 
-                                        for i, economic_activity in enumerate(categoryInfo['Economic Activities']):
-                                            economic_activity_instance = Sexo(
+                                        for economic_activity_info in categoryInfo['Economic Activities']:
+                                            economic_activity_name = economic_activity_info['Economic Activity']
+
+                                            # Verificar si ya existe una instancia con el mismo nombre
+                                            economic_activity_instance = sexos_instances.get(economic_activity_name)
+                                            if not economic_activity_instance:
+                                                # Si no existe, se crea una nueva instancia y se guarda en el diccionario
+                                                economic_activity_instance, created = EconomicActivity.objects.get_or_create(activity_name=economic_activity_name)
+                                                sexos_instances[economic_activity_name] = economic_activity_instance
+
+                                            # Crear y guardar la instancia de AccidentesxSexo
+                                            accidentesx_sexo_instance = AccidentesxSexo(
                                                 category=category_instance,
-                                                name=economic_activity['Economic Activity'],
-                                                men=economic_activity['Men'],
-                                                women=economic_activity['Women'],
+                                                EconomicActivity=economic_activity_instance,
+                                                men=economic_activity_info['Men'],
+                                                women=economic_activity_info['Women'],
                                                 total=total_value
                                             )
-                                            economic_activity_instance.save()
-                                            
+                                            accidentesx_sexo_instance.save()
+                                                                                
                                             
         except requests.exceptions.RequestException as e:
-            print(f"An error ocurrred while downloading the file: {e}") 
+            print(f"An error ocurrred while downloading the file: {e}")
