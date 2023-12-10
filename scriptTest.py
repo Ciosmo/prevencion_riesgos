@@ -17,35 +17,17 @@ informacion deseada
     <a href="articles-708568_archivo_01.xlsx" title="Ir a Estadísticas de la Seguridad Social 2022" download="Estadísticas de la Seguridad Social 2022.pdf">Estadísticas de la Seguridad Social 2022</a>
 
 """
-def load_downloaded_files(filename):
-    if os.path.exists(filename):
-        with open(filename, 'r') as file:
-            return [tuple(line.strip().split(',')) for line in file.readlines()]
-    return []
-from unidecode import unidecode
-
-def save_downloaded_files(filename, downloadedFiles):
-    with open(filename, 'w', encoding='utf-8') as file:
-        for title, filePath in downloadedFiles:
-            cleaned_title = unidecode(title)
-            file.write(f"{cleaned_title},{filePath}\n")
-
-
-
-
-
-def downloadExcelFiles(url, downloadDir, recordFile='downloadedFiles.txt'):
+def downloadExcelFiles(url, downloadDir):
     resp = requests.get(url)
     soup = BeautifulSoup(resp.text, 'html.parser')
     
     os.makedirs(downloadDir, exist_ok=True)
     
-    # Find the table with id 'tabular_generica'
+     # Find the table with id 'tabular_generica'
     table = soup.find('table', {'id': 'tabular_generica'})
     
-    downloadedFiles = load_downloaded_files(recordFile)
+    downloadedFiles = []
     
- 
     if table:
         # Find all rows in the table
         rows = table.find_all('tr')
@@ -61,21 +43,15 @@ def downloadExcelFiles(url, downloadDir, recordFile='downloadedFiles.txt'):
                     if downloadUrl.endswith('.xlsx') and 'Seguridad Social' in title:
                         fullUrl = urljoin(url, downloadUrl)
                         
-                        #limpieza 
                         newName = f"{title.replace(' ', '_')}download.xlsx"
                         filePath = os.path.join(downloadDir, newName)
-                
                         
-                        if filePath not in [file[1] for file in downloadedFiles]:
+                        if filePath not in [file[1] for file in downloadedFiles]:    
                             with open(filePath, 'wb') as file:
                                 file.write(requests.get(fullUrl).content)
-                            
-                            downloadedFiles.append((title, filePath))
+                            downloadedFiles.append((title,filePath))
                             print(f"Download: {newName}")
-                        else:
-                            print(f"Skipped download for {newName}. File already exists / El archivo ya existe.")
-    save_downloaded_files(recordFile, downloadedFiles)
-    return list(downloadedFiles)     
+    return downloadedFiles                 
     
 def extractedDataFromExcel_Type1(filePath):  
     wb = openpyxl.load_workbook(filePath)
@@ -1274,8 +1250,8 @@ def processingLogicForSheet25v2(wb):
 
     
 def getFileYear(fileName):
-    decodedFileName = fileName.encode('utf-8').decode('utf-8')
-    cleanedFileName = unidecode.unidecode(decodedFileName)
+    #decodedFileName = fileName.encode('utf-8').decode('utf-8')
+    cleanedFileName = unidecode(fileName)
     match = re.search(r'\d{4}', cleanedFileName)
     if match:
         year = int(match.group())
@@ -1304,23 +1280,8 @@ if __name__ == "__main__":
     
     lastProcessedFileYear = None
     
+
     
-    for fileInfo in downloadedFiles:
-        title, filePath = fileInfo
-        if is_2022_file(title):
-            print(f"Identified as 2022. Processing with type1")
-            extractedDataFromExcel_Type1(filePath)
-            lastProcessedFileYear = 2022
-        else:
-            year = getFileYear(title)
-            if lastProcessedFileYear is None or year == lastProcessedFileYear - 1:
-                extractedDataFromExcel_Type2(filePath, year)
-                lastProcessedFileYear = year
-            else:
-                print(f"Skipping file: {title} (Unexpected year)")
-    
-    
-    """
     for title, filePath in downloadedFiles:
         if is_2022_file(title):
             print(f"Identified as 2022. Processing with type1")
@@ -1333,4 +1294,4 @@ if __name__ == "__main__":
                 lastProcessedFileYear = year
             else:
                 print(f"Skipping file: {title} (Unexpected year)")
-    """
+    
