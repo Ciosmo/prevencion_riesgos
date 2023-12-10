@@ -40,6 +40,10 @@ class Command(BaseCommand):
                         for wantedSheet in sheetsToProcess:
                             if wantedSheet in workbookv2.sheetnames:
                                 ws = workbookv2[wantedSheet]
+
+                                economic_activities_instances = {}
+                                mutualidades_instances = {}
+                                
                                 if wantedSheet == '31':       
                                     print(f"switched to sheet: {ws.title}") 
                 
@@ -94,7 +98,6 @@ class Command(BaseCommand):
                                         data[category]['Total'] = total_values  # Store all "Total" values for each economic activity
                                         data[category]['Economic Activities'] = economicActivities
 
-                                    economic_activities_instances = {}
                                     for category, categoryInfo in data.items():
                                         for economic_activity_info in categoryInfo['Economic Activities']:
                                             activity_name = economic_activity_info['Economic Activity']
@@ -105,7 +108,6 @@ class Command(BaseCommand):
                                                 # Si no existe, se crea una nueva instancia y se guarda en el diccionario
                                                 economic_activity_instance, created = EconomicActivity.objects.get_or_create(activity_name=activity_name)
                                                 economic_activities_instances[activity_name] = economic_activity_instance
-
 
                                     for category, categoryInfo in data.items():
                                         category_instance, created = Category.objects.get_or_create(name=category)
@@ -177,7 +179,6 @@ class Command(BaseCommand):
                                         data[category]['Mutuales'] = mutuales
                                             
 
-                                    mutualidades_instances = {}
                                     for category, categoryInfo in data.items():
                                         for mutualidad_info in categoryInfo['Mutuales']:
                                             mutualidad_name = mutualidad_info['Mutualidades']
@@ -265,6 +266,17 @@ class Command(BaseCommand):
                                         data[category]['Total'] = totalValues
                                         data[category]['Economic Activities'] = economicActivities
 
+                                    for category, categoryInfo in data.items():
+                                        for economic_activity_info in categoryInfo['Economic Activities']:
+                                            activity_name = economic_activity_info['Economic Activity']
+
+                                            # Verificar si ya existe una instancia con el mismo nombre
+                                            economic_activity_instance = economic_activities_instances.get(activity_name)
+                                            if not economic_activity_instance:
+                                                # Si no existe, se crea una nueva instancia y se guarda en el diccionario
+                                                economic_activity_instance, created = EconomicActivity.objects.get_or_create(activity_name=activity_name)
+                                                economic_activities_instances[activity_name] = economic_activity_instance
+
                                     tasas_instances = {}
                                     for category, categoryInfo in data.items():
                                         category_instance, created = Category.objects.get_or_create(name=category)
@@ -338,6 +350,17 @@ class Command(BaseCommand):
                                             totalValues.append(totalValue)
                                         data[category]['Total'] = totalValues
                                         data[category]['Economic Activities'] = economicActivities
+
+                                    for category, categoryInfo in data.items():
+                                        for economic_activity_info in categoryInfo['Economic Activities']:
+                                            activity_name = economic_activity_info['Economic Activity']
+
+                                            # Verificar si ya existe una instancia con el mismo nombre
+                                            economic_activity_instance = economic_activities_instances.get(activity_name)
+                                            if not economic_activity_instance:
+                                                # Si no existe, se crea una nueva instancia y se guarda en el diccionario
+                                                economic_activity_instance, created = EconomicActivity.objects.get_or_create(activity_name=activity_name)
+                                                economic_activities_instances[activity_name] = economic_activity_instance
 
                                     sexos_instances = {}
                                     for category, categoryInfo in data.items():

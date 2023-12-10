@@ -68,7 +68,7 @@ class AccidentesxSexo(models.Model):
 
 class AccidenteLaboral(models.Model):
     nombre_empleado = models.CharField(max_length=255)
-    actividad_economica = models.CharField(max_length=255)
+    actividad_economica = models.ForeignKey(EconomicActivity, on_delete=models.CASCADE, default=1)
     genero = models.CharField(max_length=10, choices=[('Masculino', 'Masculino'), ('Femenino', 'Femenino')], null=True)
     comuna = models.CharField(max_length=255)
     fecha_accidente = models.DateField()

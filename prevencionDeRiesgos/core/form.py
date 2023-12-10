@@ -66,9 +66,21 @@ COMUNAS_CHOICES = [
 ]
 
 class AccidenteForm(forms.ModelForm):
-
-    actividad_economica = forms.ModelChoiceField(queryset=EconomicActivity.objects.all())
     comuna = forms.ChoiceField(choices=COMUNAS_CHOICES, label='Comuna')
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        # Filtrar el queryset para incluir solo actividades con ID del 1 al 17
+        queryset = EconomicActivity.objects.filter(id__in=range(1, 18))
+
+        # Agregar '----------' al principio del queryset
+        choices = [('', '----------')] + [(obj.id, str(obj)) for obj in queryset]
+        self.fields['actividad_economica'].choices = choices
+        self.fields['actividad_economica'].required = True  # Hacer el campo requerido
+
+        # Agregar script JS al widget del campo para establecer el valor predeterminado
+        self.fields['actividad_economica'].widget.attrs['onload'] = "this.value='';"
 
     class Meta:
         model = AccidenteLaboral

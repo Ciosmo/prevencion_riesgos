@@ -107,7 +107,7 @@ def grafico(request, categoria_id=1):
             return 'Pesca'
         elif row['EconomicActivity_id'] == 3:
             return 'Explotación de minas y canteras'
-        elif row['EconomicActivity_id'] == 4:
+        elif row['EconomicActivity_id'] in [4, 21]:
             return 'Industrias manufactureras'
         elif row['EconomicActivity_id'] == 5:
             return 'Suministro de electricidad, gas y agua'
@@ -123,7 +123,7 @@ def grafico(request, categoria_id=1):
             return 'Intermediación financiera'
         elif row['EconomicActivity_id'] == 11:
             return 'Actividades inmobiliarias, empresariales y de alquiler'
-        elif row['EconomicActivity_id'] == 12:
+        elif row['EconomicActivity_id'] in [12, 22]:
             return 'Administración publica y defensa; planes de seguridad social'
         elif row['EconomicActivity_id'] == 13:
             return 'Enseñanza'
