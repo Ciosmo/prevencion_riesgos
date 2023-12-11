@@ -77,7 +77,7 @@ nav ul li a:hover{
 .content {
     padding: 50px;
     flex: 1;
-    background-image: url("/static/fondo.jpg");
+    /*background-image: url("/static/fondo.jpg");*/
     background-size: cover;
 }
 
@@ -226,6 +226,7 @@ nav ul li a:hover{
         height: 50px;
         width: auto;
         padding-left: 60px;
+        display: none;
     }
 
     nav ul li a{

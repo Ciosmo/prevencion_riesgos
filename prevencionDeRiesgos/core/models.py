@@ -1,22 +1,16 @@
 from django.db import models
 
-class ExcelFile(models.Model):
-    title = models.CharField(max_length=255)
-    file_path = models.CharField(max_length=255)
+class Year(models.Model):
     year = models.IntegerField()
 
-    def str(self):
-        return self.title
-
-class ExcelPage(models.Model):
-    file = models.ForeignKey(ExcelFile, on_delete=models.CASCADE)
-    sheet_name = models.CharField(max_length=255)
-
-    def str(self):
-        return f"{self.file.title} - {self.sheet_name}"
+    def __str__(self):
+        return f"{self.year}"
 
 class Category(models.Model):
     name = models.CharField(max_length=250)
+
+    def __str__(self):
+        return self.name
 
 class EconomicActivity(models.Model):
     activity_name = models.CharField(max_length=255)
@@ -27,20 +21,27 @@ class EconomicActivity(models.Model):
 class Mutualidad(models.Model):
     mutualidad_name = models.CharField(max_length=255)
 
-class Sexo(models.Model):
-    sexo = models.CharField(max_length=255)
+    def __str__(self):
+        return self.mutualidad_name
+    
+class Region(models.Model):
+    region = models.CharField(max_length=255, null=True)
+
+    def __str__(self):
+        return self.region
 
 class DiasxActividad(models.Model):
-    #excel_page = models.ForeignKey(ExcelPage, on_delete=models.CASCADE)
+    year = models.ForeignKey(Year, on_delete=models.CASCADE, null=True)
     category = models.ForeignKey(Category, on_delete=models.CASCADE, default=1)
     EconomicActivity = models.ForeignKey(EconomicActivity, on_delete=models.CASCADE, default=1)
     achs = models.DecimalField(max_digits=10, decimal_places=2, null=True)
+    cchc = models.DecimalField(max_digits=10, decimal_places=2, null=True)
     museg = models.DecimalField(max_digits=10, decimal_places=2, null=True)
     ist = models.DecimalField(max_digits=10, decimal_places=2, null=True)
     total = models.DecimalField(max_digits=10, decimal_places=2, null=True)
 
 class DiasxMut(models.Model):
-    #excel_page = models.ForeignKey(ExcelPage, on_delete=models.CASCADE)
+    year = models.ForeignKey(Year, on_delete=models.CASCADE, null=True)
     category = models.ForeignKey(Category, on_delete=models.CASCADE, default=1)
     mutual = models.ForeignKey(Mutualidad, on_delete=models.CASCADE, default=1)
     anio2018 = models.DecimalField(max_digits=10, decimal_places=2, null=True)
@@ -50,7 +51,25 @@ class DiasxMut(models.Model):
     anio2022 = models.DecimalField(max_digits=10, decimal_places=2, null=True)
 
 class TasaxAct(models.Model):
-    #excel_page = models.ForeignKey(ExcelPage, on_delete=models.CASCADE)
+    year = models.ForeignKey(Year, on_delete=models.CASCADE, null=True)
+    category = models.ForeignKey(Category, on_delete=models.CASCADE, default=1)
+    EconomicActivity = models.ForeignKey(EconomicActivity, on_delete=models.CASCADE, default=1)
+    achs = models.DecimalField(max_digits=10, decimal_places=2, null=True)
+    cchc = models.DecimalField(max_digits=10, decimal_places=2, null=True)
+    museg = models.DecimalField(max_digits=10, decimal_places=2, null=True)
+    ist = models.DecimalField(max_digits=10, decimal_places=2, null=True)
+    total = models.DecimalField(max_digits=10, decimal_places=2, null=True)
+
+class AccidentesxSexo(models.Model):
+    year = models.ForeignKey(Year, on_delete=models.CASCADE, null=True)
+    category = models.ForeignKey(Category, on_delete=models.CASCADE, default=1)
+    EconomicActivity = models.ForeignKey(EconomicActivity, on_delete=models.CASCADE, default=1)
+    men = models.DecimalField(max_digits=10, decimal_places=2, null=True)
+    women = models.DecimalField(max_digits=10, decimal_places=2, null=True)
+    total = models.DecimalField(max_digits=10, decimal_places=2, null=True)
+
+class PorcentajexAct(models.Model):
+    year = models.ForeignKey(Year, on_delete=models.CASCADE, null=True)
     category = models.ForeignKey(Category, on_delete=models.CASCADE, default=1)
     EconomicActivity = models.ForeignKey(EconomicActivity, on_delete=models.CASCADE, default=1)
     achs = models.DecimalField(max_digits=10, decimal_places=2, null=True)
@@ -58,13 +77,33 @@ class TasaxAct(models.Model):
     ist = models.DecimalField(max_digits=10, decimal_places=2, null=True)
     total = models.DecimalField(max_digits=10, decimal_places=2, null=True)
 
-class AccidentesxSexo(models.Model):
-    #excel_page = models.ForeignKey(ExcelPage, on_delete=models.CASCADE)
+class FallecidosxAct(models.Model):
+    year = models.ForeignKey(Year, on_delete=models.CASCADE, null=True)
     category = models.ForeignKey(Category, on_delete=models.CASCADE, default=1)
     EconomicActivity = models.ForeignKey(EconomicActivity, on_delete=models.CASCADE, default=1)
-    men = models.DecimalField(max_digits=10, decimal_places=2, null=True)
-    women = models.DecimalField(max_digits=10, decimal_places=2, null=True)
-    total = models.DecimalField(max_digits=10, decimal_places=2, null=True)
+    achs = models.IntegerField(null=True)
+    cchc = models.DecimalField(max_digits=10, decimal_places=2, null=True)
+    museg = models.IntegerField(null=True)
+    ist = models.IntegerField(null=True)
+    isl = models.IntegerField(null=True)
+    total = models.IntegerField(null=True)
+
+class FallecidosxSexo(models.Model):
+    year = models.ForeignKey(Year, on_delete=models.CASCADE, null=True)
+    category = models.ForeignKey(Category, on_delete=models.CASCADE, default=1)
+    EconomicActivity = models.ForeignKey(EconomicActivity, on_delete=models.CASCADE, default=1)
+    men = models.IntegerField(null=True)
+    women = models.IntegerField(null=True)
+    total = models.IntegerField(null=True)
+
+class AccidentesxRegion(models.Model):
+    year = models.ForeignKey(Year, on_delete=models.CASCADE, null=True)
+    category = models.ForeignKey(Category, on_delete=models.CASCADE, default=1)
+    region = models.ForeignKey(Region, on_delete=models.CASCADE, default=1, null=True)
+    achs = models.DecimalField(max_digits=10, decimal_places=2, null=True)
+    museg = models.DecimalField(max_digits=10, decimal_places=2, null=True)
+    ist = models.DecimalField(max_digits=10, decimal_places=2, null=True)
+    total = models.DecimalField(max_digits=10, decimal_places=3, null=True)
 
 class AccidenteLaboral(models.Model):
     nombre_empleado = models.CharField(max_length=255)

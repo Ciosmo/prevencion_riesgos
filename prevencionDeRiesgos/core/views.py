@@ -1,4 +1,4 @@
-from core.models import DiasxActividad, DiasxMut, TasaxAct, AccidentesxSexo, AccidenteLaboral, EconomicActivity
+from core.models import DiasxActividad, DiasxMut, TasaxAct, AccidentesxSexo, FallecidosxAct, FallecidosxSexo, AccidentesxRegion, AccidenteLaboral, EconomicActivity, Region, Mutualidad
 from django.contrib.auth.models import User
 from django.contrib import messages
 from django.contrib.auth import get_user_model
@@ -8,6 +8,7 @@ import plotly.express as px
 
 from plotly.offline import plot
 import pandas as pd
+
 
 from core.form import AccidenteForm
 
@@ -60,33 +61,44 @@ def grafico(request, categoria_id=1):
     datos_mut = DiasxMut.objects.all()
     datos_tasa_eco_act = TasaxAct.objects.all()
     datos_sexo = AccidentesxSexo.objects.all()
+    datos_deadxact = FallecidosxAct.objects.all()
+    datos_deadxsexo = FallecidosxSexo.objects.all()
+    datos_actxreg = AccidentesxRegion.objects.all()
 
-    # Crear un DataFrame con los datos de Mutualidad
+    # Crear un DataFrame con los datos 
     df_mut = pd.DataFrame(list(datos_mut.values()))
 
-    # Crear un DataFrame con los datos de EconomicActivity
     df_eco = pd.DataFrame(list(datos_eco.values()))
 
-    # Crear un DataFrame con los datos de EconomicActivity
     df_tasa_eco_act = pd.DataFrame(list(datos_tasa_eco_act.values()))
 
-    # Crear un DataFrame con los datos de EconomicActivity
     df_sexo = pd.DataFrame(list(datos_sexo.values()))
 
+    df_deadxact = pd.DataFrame(list(datos_deadxact.values()))
+
+    df_deadxsexo = pd.DataFrame(list(datos_deadxsexo.values()))
+
+    df_actxreg = pd.DataFrame(list(datos_actxreg.values()))
+
     def asignar_categoria(row):
-        if row['category_id'] == 1:
+        if row['category_id'] in [1, 5]:
             return 'Accidente de Trabajo'
         elif row['category_id'] == 2:
             return 'Accidente de Trayecto'
         elif row['category_id'] == 3:
             return 'Accidente de Trabajo + Trayecto'
+        elif row['category_id'] == 6:
+            return 'Enfermedades profesionales'
         else:
-            return 'Accidente de Trabajo + Trayecto'
+            return 'Desconocida'
     
     df_mut['Categoria'] = df_mut.apply(lambda row: asignar_categoria(row), axis=1)
     df_eco['Categoria'] = df_eco.apply(lambda row: asignar_categoria(row), axis=1)
     df_tasa_eco_act['Categoria'] = df_tasa_eco_act.apply(lambda row: asignar_categoria(row), axis=1)
     df_sexo['Categoria'] = df_sexo.apply(lambda row: asignar_categoria(row), axis=1)
+    df_deadxact['Categoria'] = df_deadxact.apply(lambda row: asignar_categoria(row), axis=1)
+    df_deadxsexo['Categoria'] = df_deadxsexo.apply(lambda row: asignar_categoria(row), axis=1)
+    df_actxreg['Categoria'] = df_actxreg.apply(lambda row: asignar_categoria(row), axis=1)
 
     def asignar_mutualidad(row):
         if row['mutual_id'] == 1:
@@ -141,52 +153,107 @@ def grafico(request, categoria_id=1):
     df_eco['Actividad_Economica'] = df_eco.apply(asignar_actividad, axis=1)
     df_tasa_eco_act['Actividad_Economica'] = df_tasa_eco_act.apply(asignar_actividad, axis=1)
     df_sexo['Actividad_Economica'] = df_sexo.apply(asignar_actividad, axis=1)
+    df_deadxact['Actividad_Economica'] = df_deadxact.apply(asignar_actividad, axis=1)
+    df_deadxsexo['Actividad_Economica'] = df_deadxsexo.apply(asignar_actividad, axis=1)
 
-
+    def asignar_region(row):
+        if row['region_id'] == 1:
+            return 'Arica y Parinacota'
+        elif row['region_id'] == 2:
+            return 'Tarapacá'
+        elif row['region_id'] == 3:
+            return 'Antofagasta'
+        elif row['region_id'] == 4:
+            return 'Atacama'
+        elif row['region_id'] == 5:
+            return 'Coquimbo'
+        elif row['region_id'] == 6:
+            return 'Valparaíso'
+        elif row['region_id'] == 7:
+            return 'Libertador Gral. Bdo. O*Higgins'
+        elif row['region_id'] == 8:
+            return 'Maule'
+        elif row['region_id'] == 9:
+            return 'Ñuble'
+        elif row['region_id'] == 10:
+            return 'Biobío'
+        elif row['region_id'] == 11:
+            return 'La Araucanía'
+        elif row['region_id'] == 12:
+            return 'Los Ríos'
+        elif row['region_id'] == 13:
+            return 'Los Lagos'
+        elif row['region_id'] == 14:
+            return 'Aysén'
+        elif row['region_id'] == 15:
+            return 'Magallanes y la Antártica Chilena'
+        elif row['region_id'] == 16:
+            return 'Metropolitana de Santiago'
+        else:
+            return 'Desconocida'
+        
+    df_actxreg['Region'] = df_actxreg.apply(asignar_region, axis=1)
 
     valores_a_eliminar = ['Desconocida']
 
     # Filtrar el DataFrame para excluir las filas con los valores específicos
+    df_mut = df_mut[~df_mut['Categoria'].isin(valores_a_eliminar)]
     df_mut = df_mut[~df_mut['Mutualidad'].isin(valores_a_eliminar)]
 
+    df_eco = df_eco[~df_eco['Categoria'].isin(valores_a_eliminar)]
     df_eco = df_eco[~df_eco['Actividad_Economica'].isin(valores_a_eliminar)]
 
+    df_tasa_eco_act = df_tasa_eco_act[~df_tasa_eco_act['Categoria'].isin(valores_a_eliminar)]
     df_tasa_eco_act = df_tasa_eco_act[~df_tasa_eco_act['Actividad_Economica'].isin(valores_a_eliminar)]
 
+    df_sexo = df_sexo[~df_sexo['Categoria'].isin(valores_a_eliminar)]
     df_sexo = df_sexo[~df_sexo['Actividad_Economica'].isin(valores_a_eliminar)]
 
 
-    #Mutual
+    # Función para ocultar la leyenda si el ancho de la pantalla es menor a 800 píxeles
+    def hide_legend_if_small_screen(fig):
+        if fig.layout.width and fig.layout.width < 800:
+            fig.update_layout(legend_title_text='', legend=dict(title=''), showlegend=False)
 
-    mut1 = px.bar(df_mut, x='Mutualidad', y='anio2018', title=f'Promedio de dias perdidos por Mutualidad segun Año', color='Categoria')
+    # Ejemplo con un gráfico
+    mut1 = px.bar(df_mut, x='Mutualidad', y='anio2018', title=f'Promedio de días perdidos por Mutualidad según Año', color='Categoria')
+    hide_legend_if_small_screen(mut1)
 
-    mut2 = px.bar(df_mut, x='Mutualidad', y='anio2019', title=f'Promedio de dias perdidos por Mutualidad segun Año', color='Categoria')
+    mut2 = px.bar(df_mut, x='Mutualidad', y='anio2019', title=f'Promedio de días perdidos por Mutualidad según Año', color='Categoria')
+    hide_legend_if_small_screen(mut2)
 
-    mut3 = px.bar(df_mut, x='Mutualidad', y='anio2020', title=f'Promedio de dias perdidos por Mutualidad segun Año', color='Categoria')
+    mut3 = px.bar(df_mut, x='Mutualidad', y='anio2020', title=f'Promedio de días perdidos por Mutualidad según Año', color='Categoria')
+    hide_legend_if_small_screen(mut3)
 
-    mut4 = px.bar(df_mut, x='Mutualidad', y='anio2021', title=f'Promedio de dias perdidos por Mutualidad segun Año', color='Categoria')
+    mut4 = px.bar(df_mut, x='Mutualidad', y='anio2021', title=f'Promedio de días perdidos por Mutualidad según Año', color='Categoria')
+    hide_legend_if_small_screen(mut4)
 
-    #Actividad Economica
+    # Actividad Economica
+    eco1 = px.bar(df_eco, x='Actividad_Economica', y='achs', title=f'Promedio de días perdidos por Actividad Económica según Mutualidad', color='Categoria')
+    hide_legend_if_small_screen(eco1)
 
-    eco1 = px.bar(df_eco, x='Actividad_Economica', y='achs', title=f'Promedio de dias perdidos por Actividad Económica segun Mutualidad', color='Categoria')
+    eco2 = px.bar(df_eco, x='Actividad_Economica', y='museg', title=f'Promedio de días perdidos por Actividad Económica según Mutualidad', color='Categoria')
+    hide_legend_if_small_screen(eco2)
 
-    eco2 = px.bar(df_eco, x='Actividad_Economica', y='museg', title=f'Promedio de dias perdidos por Actividad Económica segun Mutualidad', color='Categoria')
+    eco3 = px.bar(df_eco, x='Actividad_Economica', y='ist', title=f'Promedio de días perdidos por Actividad Económica según Mutualidad', color='Categoria')
+    hide_legend_if_small_screen(eco3)
 
-    eco3 = px.bar(df_eco, x='Actividad_Economica', y='ist', title=f'Promedio de dias perdidos por Actividad Económica segun Mutualidad', color='Categoria')
-
-    #Tasa 
-
+    # Tasa
     tea1 = px.bar(df_tasa_eco_act, x='Actividad_Economica', y='achs', title=f'Tasa de accidentes por Actividad Económica', color='Categoria')
+    hide_legend_if_small_screen(tea1)
 
     tea2 = px.bar(df_tasa_eco_act, x='Actividad_Economica', y='museg', title=f'Tasa de accidentes por Actividad Económica', color='Categoria')
+    hide_legend_if_small_screen(tea2)
 
     tea3 = px.bar(df_tasa_eco_act, x='Actividad_Economica', y='ist', title=f'Tasa de accidentes por Actividad Económica', color='Categoria')
+    hide_legend_if_small_screen(tea3)
 
-    #Sexo
-
+    # Sexo
     sexo1 = px.bar(df_sexo, x='Actividad_Economica', y='men', title=f'Cantidad de accidentes por Sexo', color='Categoria')
+    hide_legend_if_small_screen(sexo1)
 
     sexo2 = px.bar(df_sexo, x='Actividad_Economica', y='women', title=f'Cantidad de accidentes por Sexo', color='Categoria')
+    hide_legend_if_small_screen(sexo2)
 
     # Convierte los gráficos en HTML
     plot_div_mut1 = plot(mut1, output_type='div', include_plotlyjs=False)

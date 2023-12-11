@@ -4,7 +4,7 @@ import openpyxl
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin
 from django.core.management.base import BaseCommand
-from core.models import DiasxActividad, DiasxMut, TasaxAct, AccidentesxSexo, Category, EconomicActivity, Mutualidad, Sexo
+from core.models import DiasxActividad, DiasxMut, TasaxAct, AccidentesxSexo, Category, EconomicActivity, Mutualidad
 
 class Command(BaseCommand):
     help = 'Extraer datos de la pagina SUSESO y guardarlos en la BD'
@@ -125,7 +125,7 @@ class Command(BaseCommand):
                                                 ist=economic_activity['IST'],
                                                 total=total_value
                                             )
-                                            diasxactividad_instance.save()   
+                                            diasxactividad_instance.save()
 
                                 if wantedSheet == '29':
                                     print(f"switched to sheet: {ws.title}")
