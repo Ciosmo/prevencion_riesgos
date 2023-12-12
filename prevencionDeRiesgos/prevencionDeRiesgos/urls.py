@@ -22,10 +22,7 @@ from django.conf import settings
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('auth/', include('authentication.urls')),
-    path('myForum/', include('myForum.urls')),
     path('', include('core.urls')),
-    path('tinymce/', include('tinymce.urls')),
-    path('hitcount/', include('hitcount.urls', namespace='hitcount')),
 
 
 ]
