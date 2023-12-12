@@ -5,4 +5,4 @@ from .models import Author
 class ProfilePicUpdateForm(forms.ModelForm):
     class Meta:
         model = Author
-        fields = ['profilePic']
+        fields = ['fullname','profilePic', 'bio']

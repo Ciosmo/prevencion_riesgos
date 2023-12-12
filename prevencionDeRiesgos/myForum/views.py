@@ -32,6 +32,7 @@ def homeForumPosts(request,slug):
     }
     return render(request, "myForum/posts.html", context)
 
+@login_required
 def update_profile_pic(request):
     author = request.user.author
     if request.method == 'POST':
@@ -39,3 +40,5 @@ def update_profile_pic(request):
         if form.is_valid():
             form.save()
             return redirect('profile')
+    else:
+        form = ProfilePicUpdateForm(instance=author)
