@@ -19,9 +19,6 @@ def home(request):
 def info(request):
     return render(request, 'info.html')
 
-def info2(request):
-    return render(request, 'info2.html')
-
 @login_required
 def datosform(request):
     accidentes = AccidenteLaboral.objects.all()
