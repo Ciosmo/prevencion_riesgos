@@ -2,6 +2,7 @@ from core.models import DiasxActividad, DiasxMut, TasaxAct, AccidentesxSexo, Por
 from django.contrib.auth.models import User
 from django.contrib import messages
 from django.contrib.auth import get_user_model
+from django.contrib.auth.decorators import login_required
 
 from django.shortcuts import redirect, render, get_object_or_404
 import plotly.express as px
@@ -15,10 +16,18 @@ from core.form import AccidenteForm
 def home(request):
     return render(request, 'home.html')
 
+def info(request):
+    return render(request, 'info.html')
+
+def info2(request):
+    return render(request, 'info2.html')
+
+@login_required
 def datosform(request):
     accidentes = AccidenteLaboral.objects.all()
     return render(request, 'GraficoForm.html', {'accidentes': accidentes})
 
+@login_required
 def registrar_accidente(request):
     if request.method == 'POST':
         form = AccidenteForm(request.POST)
@@ -60,6 +69,7 @@ def accidente_detail(request, accidente_id):
         'fallecidosxsexo': fallecidosxsexo
     })
 
+@login_required
 def grafico(request, categoria_id=1):
     # Obtener los datos de tu base de datos
     datos_eco = DiasxActividad.objects.all()
@@ -220,8 +230,6 @@ def grafico(request, categoria_id=1):
             return 'Aysén'
         elif row['region_id'] == 15:
             return 'Magallanes y la Antártica Chilena'
-        elif row['region_id'] == 16:
-            return 'Metropolitana de Santiago'
         else:
             return 'Desconocida'
         
@@ -279,7 +287,7 @@ def grafico(request, categoria_id=1):
     df_actxreg_2015 = df_actxreg[df_actxreg['year_id'] == 7]
     df_actxreg_2014 = df_actxreg[df_actxreg['year_id'] == 8]
 
-    # Crear gráficos para cada año (achs)
+    # Promedio de dias perdidos por actividad economica
     eco1_2021 = px.bar(df_eco_2021, x='Actividad_Economica', y='achs', title='Promedio de días perdidos por Actividad Económica en 2021', color='Categoria')
 
     eco1_2020 = px.bar(df_eco_2020, x='Actividad_Economica', y='achs', title='Promedio de días perdidos por Actividad Económica en 2020', color='Categoria')
@@ -331,7 +339,7 @@ def grafico(request, categoria_id=1):
     eco3_2014 = px.bar(df_eco_2014, x='Actividad_Economica', y='ist', title='Promedio de días perdidos por Actividad Económica en 2014', color='Categoria')
 
 
-    # Crear gráficos para cada año (achs)
+    #Fallecidos por actividad economica
     deadxact1_2021 = px.bar(df_deadxact_2021, x='Actividad_Economica', y='achs', title='Fallecidos por Actividad Económica en 2021', color='Categoria')
 
     deadxact1_2020 = px.bar(df_deadxact_2020, x='Actividad_Economica', y='achs', title='Fallecidos por Actividad Económica en 2020', color='Categoria')
@@ -381,8 +389,9 @@ def grafico(request, categoria_id=1):
     deadxact3_2015 = px.bar(df_deadxact_2015, x='Actividad_Economica', y='ist', title='Fallecidos por Actividad Económica en 2015', color='Categoria')
 
     deadxact3_2014 = px.bar(df_deadxact_2014, x='Actividad_Economica', y='ist', title='Fallecidos por Actividad Económica en 2014', color='Categoria')
+    
 
-
+    #Accidentes por Region
     actxreg1_2021 = px.bar(df_actxreg_2021, x='Region', y='achs', title='Accidentes por Regiones en 2021', color='Categoria')
 
     actxreg1_2020 = px.bar(df_actxreg_2020, x='Region', y='achs', title='Accidentes por Regionesen 2020', color='Categoria')
@@ -434,7 +443,7 @@ def grafico(request, categoria_id=1):
     actxreg3_2014 = px.bar(df_actxreg_2014, x='Region', y='ist', title='Accidentes por Regiones en 2014', color='Categoria')
     
 
-    # Ejemplo con un gráfico
+    # Mutualidad
     mut1 = px.bar(df_mut, x='Mutualidad', y='anio2018', title=f'Promedio de días perdidos por Mutualidad según Año', color='Categoria')
     mut2 = px.bar(df_mut, x='Mutualidad', y='anio2019', title=f'Promedio de días perdidos por Mutualidad según Año', color='Categoria')
     mut3 = px.bar(df_mut, x='Mutualidad', y='anio2020', title=f'Promedio de días perdidos por Mutualidad según Año', color='Categoria')
@@ -446,9 +455,9 @@ def grafico(request, categoria_id=1):
     eco3 = px.bar(df_eco, x='Actividad_Economica', y='ist', title=f'Promedio de días perdidos por Actividad Económica según Mutualidad', color='Categoria')
 
     # Tasa
-    tea1 = px.bar(df_tasa_eco_act, x='Actividad_Economica', y='achs', title=f'Tasa de accidentes por Actividad Económica', color='Categoria')
-    tea2 = px.bar(df_tasa_eco_act, x='Actividad_Economica', y='museg', title=f'Tasa de accidentes por Actividad Económica', color='Categoria')
-    tea3 = px.bar(df_tasa_eco_act, x='Actividad_Economica', y='ist', title=f'Tasa de accidentes por Actividad Económica', color='Categoria')
+    tea1 = px.pie(df_tasa_eco_act, values='achs', names='Actividad_Economica', title='Tasa de accidentes por Actividad Económica (achs)', color='Actividad_Economica')
+    tea2 = px.pie(df_tasa_eco_act, values='museg', names='Actividad_Economica', title='Tasa de accidentes por Actividad Económica (museg)', color='Actividad_Economica')
+    tea3 = px.pie(df_tasa_eco_act, values='ist', names='Actividad_Economica', title='Tasa de accidentes por Actividad Económica (ist)', color='Actividad_Economica')
 
     # Sexo
     sexo1 = px.bar(df_sexo, x='Actividad_Economica', y='men', title=f'Cantidad de accidentes por Sexo', color='Categoria')

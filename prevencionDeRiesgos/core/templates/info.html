@@ -1,0 +1,175 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{% static 'info.css' %}">
+    <title>Datos Prevencion de Riesgos</title>
+    <script src="https://kit.fontawesome.com/827f93132a.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+
+<!-- Barra de tareas -->
+<div class="header">
+    <nav class="navbar">
+        <input type="checkbox" id="check" onclick="desactivarOtros(this)">
+        <label for="check" class="checkbtn">
+            <i class="fas fa-bars"></i>
+        </label>
+        <ul class="nav-links">
+            <li><a href="/home">Inicio</a></li>
+            <li><a href="{% url 'login' %}">Iniciar sesión</a></li>
+            <li><a href="{% url 'signup' %}">Registrarse</a></li>
+        </ul>
+        <div class="logo">
+            <img src="{% static 'img/riesgo.png' %}" alt="Logo">
+        </div>
+    </nav>
+<!--<a href="#" class="btn"><button>ChatGPT</button></a>-->
+</div>
+
+<!-- Contenido -->
+<div class="content">
+
+    <ul class="accordion">
+        <li>
+            <input type="checkbox" class="accordion" id="1" onclick="desactivarOtros(this)" >
+            <label for="1">¿Qué es un accidente de trabajo?</label>
+            <div class="content">
+
+                <p>
+                    Accidente de Trabajo es toda lesión que un trabajador/a sufra a causa o con ocasión del trabajo,
+                     y que le produzca incapacidad (temporal o permanente) o muerte.
+                </p>
+
+            </div>
+        </li>
+        <li>
+            <input type="checkbox" class="accordion" id="2" onclick="desactivarOtros(this)">
+            <label for="2">¿Que hacer en caso de accidente?</label>
+            <div class="content">
+
+                <p>
+                    Accidente de Trabajo: Toda lesión que un trabajador/a sufra a causa o con ocasión del trabajo, y que le produzca incapacidad (temporal o permanente) o muerte.
+Avisar inmediatamente a su jefe o supervisor directo.
+Su empleador/a debe prestarle los primeros auxilios y derivar oportunamente al afectado al servicio de urgencia del IST. Asimismo, el empleador/a debe dar aviso antes de 24 horas de ocurrido el accidente al IST, a través del formulario de Denuncia Individual de Accidente de Trabajo, DIAT, guardar copia de la DIAT recepcionada y entregar una copia al trabajador.
+Si el empleador/a no presenta la DIAT dentro de las 24 horas de conocido el accidente, ésta debe ser presentada por el trabajador, sus familiares, el Comité Paritario de Higiene y Seguridad (CPHS) de la empresa, el médico que lo atendió o cualquier persona que haya tenido conocimiento de los hechos. En este caso o si las circunstancias en que ocurrió el accidente impiden que tome conocimiento del mismo, el trabajador debe concurrir por sus propios medios, debiendo ser atendido de inmediato.
+Si el accidente es grave (riesgo vital y/o secuela funcional grave) puede ser trasladado/a para su primera atención a un centro de salud que no sea del IST.
+                </p>
+
+            </div>
+        </li>
+        <li>
+            <input type="checkbox" class="accordion" id="3" onclick="desactivarOtros(this)">
+            <label for="3">¿Qué hacer ante un accidente del trabajo?</label>
+            <div class="content">
+
+                <p>
+                    Avisar inmediatamente a su jefe o supervisor directo.
+Su empleador/a debe prestarle los primeros auxilios y derivar oportunamente al afectado al servicio de urgencia del IST. Asimismo, el empleador/a debe dar aviso antes de 24 horas de ocurrido el accidente al IST, a través del formulario de Denuncia Individual de Accidente de Trabajo, DIAT, guardar copia de la DIAT recepcionada y entregar una copia al trabajador.
+Si el empleador/a no presenta la DIAT dentro de las 24 horas de conocido el accidente, ésta debe ser presentada por el trabajador, sus familiares, el Comité Paritario de Higiene y Seguridad (CPHS) de la empresa, el médico que lo atendió o cualquier persona que haya tenido conocimiento de los hechos. En este caso o si las circunstancias en que ocurrió el accidente impiden que tome conocimiento del mismo, el trabajador debe concurrir por sus propios medios, debiendo ser atendido de inmediato.
+Si el accidente es grave (riesgo vital y/o secuela funcional grave) puede ser trasladado/a para su primera atención a un centro de salud que no sea del IST.
+                </p>
+
+            </div>
+        </li>
+        <li>
+            <input type="checkbox" class="accordion" id="4" onclick="desactivarOtros(this)">
+            <label for="4">¿Qué es un accidente de trayecto?</label>
+            <div class="content">
+
+                <p>
+                    Es el ocurrido en el trayecto directo (tanto de ida como de regreso) entre la habitación y el lugar de trabajo. Así como aquel que ocurre en el trayecto directo entre dos lugares de trabajo de distintos empleadores.
+                </p>
+
+            </div>
+        </li>
+        <li>
+            <input type="checkbox" class="accordion" id="5" onclick="desactivarOtros(this)">
+            <label for="5">¿Qué hacer ante un accidente de trayecto?</label>
+            <div class="content">
+
+                <p>
+                    Es el ocurrido en el trayecto directo (tanto de ida como de regreso) entre la habitación y el lugar de trabajo. Así como aquel que ocurre en el trayecto directo entre dos lugares de trabajo de distintos empleadores.
+Acudir al centro de atención del IST (en el caso de no requerir ambulancia), donde debe explicar que se trata de un accidente de trayecto e informar al empleador/a apenas sea posible.
+El empleador/a debe dar aviso antes de 24 horas de conocido el accidente al IST, a través del formulario de Denuncia Individual de Accidente de Trabajo, DIAT.
+Si el empleador/a no presenta la DIAT o las circunstancias en que ocurrió el accidente impiden que tome conocimiento del mismo, el trabajador debe concurrir por sus propios medios, debiendo ser atendido de inmediato.
+En el caso de los accidentes de trayecto usted debe detallar las circunstancias del accidente, precisando día, hora y lugar y acompañar medios de prueba como por ejemplo el parte policial, constancia de Carabineros o testigos.
+                </p>
+
+            </div>
+        </li>
+        <li>
+            <input type="checkbox" class="accordion" id="5" onclick="desactivarOtros(this)">
+            <label for="5">¿Qué hacer en caso de sufrir una enfermedad profesional?</label>
+            <div class="content">
+
+                <p>
+                    Es aquella causada de manera directa por el ejercicio del trabajo y que le produzca incapacidad o muerte.
+Si usted cree tener alguna enfermedad debido al trabajo que desempeña, lo primero que tiene que hacer es informar a su empleador/a.
+El empleador/a tiene 24 horas para hacer la denuncia al IST, a través del formulario de Denuncia Individual de Enfermedad Profesional, DIEP.
+Si el empleador no presenta la DIEP dentro de plazo, ésta deberá ser realizada por el trabajador, sus familiares, el Comité Paritario de Higiene y Seguridad (CPHS) de la empresa o por el médico tratante.
+El empleador/a debe enviar al trabajador/a inmediatamente al centro asistencial del IST, para ser evaluado/a y realizar los exámenes necesarios para determinar si la enfermedad es de origen laboral (causada directamente por el trabajo que usted desempeña) o de origen común.
+                </p>
+
+            </div>
+        </li>
+    </ul>
+
+</div>
+
+<footer class="pie-pagina">
+    <div class="grupo-1">
+        <div class="box">
+            <figure>
+                <a href="">
+                    <img src="{% static 'img/logoDuoc.png' %}" alt="Logo">
+                </a>
+            </figure>
+        </div>
+        <div class="box">
+            <h2></h2>
+            <p>Es mejor prepárese y prevenir en lugar de reparar y arrepentirse</p>
+        </div>
+        <div class="box">
+            <h2>Siguenos</h2>
+            <div class="social">
+                <a href="#" class="fa fa-facebook"></a>
+                <a href="#" class="fa fa-instagram"></a>
+                <a href="#" class="fa fa-youtube"></a>
+                <a href="#" class="fa fa-whatsapp"></a>
+            </div>
+        </div>
+    </div>
+
+    <div class="grupo-2">
+        <small>&copy; 2023 Tu Empresa. Todos los derechos reservados.</small>
+    </div>
+</footer>
+
+<script>
+
+    function desactivarOtros(checkbox) {
+        // Obtener todos los checkboxes
+        var checkboxes = document.querySelectorAll('.accordion');
+
+        // Desactivar todos los checkboxes excepto el que se hizo clic
+        checkboxes.forEach(function (element) {
+            if (element !== checkbox) {
+                element.checked = false;
+            }
+        });
+    }
+</script>
+
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

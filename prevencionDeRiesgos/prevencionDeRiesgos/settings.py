@@ -118,6 +118,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+
 AUTH_USER_MODEL = 'authentication.CustomUser'
 LOGOUT_REDIRECT_URL = 'home'
 

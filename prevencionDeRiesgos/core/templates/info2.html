@@ -1,0 +1,255 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{% static 'info.css' %}">
+    <title>Datos Prevencion de Riesgos</title>
+    <script src="https://kit.fontawesome.com/827f93132a.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+
+<!-- Barra de tareas -->
+<div class="header">
+    <nav class="navbar">
+        <input type="checkbox" id="check" onclick="desactivarOtros(this)">
+        <label for="check" class="checkbtn">
+            <i class="fas fa-bars"></i>
+        </label>
+        <ul class="nav-links">
+            <li><a href="/home">Inicio</a></li>
+            <li><a href="{% url 'login' %}">Iniciar sesión</a></li>
+            <li><a href="{% url 'signup' %}">Registrarse</a></li>
+        </ul>
+        <div class="logo">
+            <img src="{% static 'img/riesgo.png' %}" alt="Logo">
+        </div>
+    </nav>
+<!--<a href="#" class="btn"><button>ChatGPT</button></a>-->
+</div>
+
+<!-- Contenido -->
+<div class="content">
+
+    <ul class="accordion">
+        <li>
+            <input type="checkbox" class="accordion" id="1" onclick="cambiarGrafico('mut1'); desactivarOtros(this)" >
+            <label for="1">Datos de Mutualidades segun años</label>
+            <div class="content">
+
+                <!-- Botones para cambiar el gráfico -->
+                <button class="btn btn-primary" onclick="cambiarGrafico('mut1')">2018</button>
+                <button class="btn btn-primary" onclick="cambiarGrafico('mut2')">2019</button>
+                <button class="btn btn-primary" onclick="cambiarGrafico('mut3')">2020</button>
+                <button class="btn btn-primary" onclick="cambiarGrafico('mut4')">2021</button>
+
+                <!-- Contenedor de gráficos -->
+
+                <div id="plotly_div_mut1" class="plot-container">{{ plotly_div1|safe }}</div>
+                <div id="plotly_div_mut2" class="plot-container">{{ plotly_div2|safe }}</div>
+                <div id="plotly_div_mut3" class="plot-container">{{ plotly_div3|safe }}</div>
+                <div id="plotly_div_mut4" class="plot-container">{{ plotly_div4|safe }}</div>
+
+            </div>
+        </li>
+        <li>
+            <input type="checkbox" class="accordion" id="2" onclick="cambiarGrafico('tea1'); desactivarOtros(this)">
+            <label for="2">Tasa de accidentes</label>
+            <div class="content">
+
+                <!-- Botones para cambiar el gráfico -->
+                <button class="btn btn-primary" onclick="cambiarGrafico('tea1')">Achs</button>
+                <button class="btn btn-primary" onclick="cambiarGrafico('tea2')">Museg</button>
+                <button class="btn btn-primary" onclick="cambiarGrafico('tea3')">Ist</button>
+
+                <!-- Contenedor de gráficos -->
+
+                <div id="plotly_div_tea1" class="plot-container">{{ plotly_div8|safe }}</div>
+                <div id="plotly_div_tea2" class="plot-container">{{ plotly_div9|safe }}</div>
+                <div id="plotly_div_tea3" class="plot-container">{{ plotly_div10|safe }}</div>
+
+            </div>
+        </li>
+        <li>
+            <input type="checkbox" class="accordion" id="3" onclick="cambiarGrafico('sexo1'); desactivarOtros(this)">
+            <label for="3">Accidentes por Genero</label>
+            <div class="content">
+
+                <!-- Botones para cambiar el gráfico -->
+                <button class="btn btn-primary" onclick="cambiarGrafico('sexo1')">Hombre</button>
+                <button class="btn btn-primary" onclick="cambiarGrafico('sexo2')">Mujer</button>
+
+                <!-- Contenedor de gráficos -->
+
+                <div id="plotly_div_sexo1" class="plot-container">{{ plotly_div11|safe }}</div>
+                <div id="plotly_div_sexo2" class="plot-container">{{ plotly_div12|safe }}</div>
+
+            </div>
+        </li>
+        <li>
+            <input type="checkbox" class="accordion" id="4" onclick="cambiarGrafico('eco1_2021'); desactivarOtros(this)">
+            <label for="4">Datos Actividad Economica segun Mutualidad (2021)</label>
+            <div class="content">
+
+                <!-- Botones para cambiar el gráfico -->
+                <button class="btn btn-primary" onclick="cambiarGrafico('eco1_2021')">Achs</button>
+                <button class="btn btn-primary" onclick="cambiarGrafico('eco2_2021')">Museg</button>
+                <button class="btn btn-primary" onclick="cambiarGrafico('eco3_2021')">Ist</button>
+
+                <!-- Contenedor de gráficos -->
+
+                <div id="plotly_div_eco1_2021" class="plot-container">{{ plotly_div17|safe }}</div>
+                <div id="plotly_div_eco2_2021" class="plot-container">{{ plotly_div25|safe }}</div>
+                <div id="plotly_div_eco3_2021" class="plot-container">{{ plotly_div33|safe }}</div>
+
+            </div>
+        </li>
+        <li>
+            <input type="checkbox" class="accordion" id="5" onclick="cambiarGrafico('eco1_2020'); desactivarOtros(this)">
+            <label for="5">Datos Actividad Economica segun Mutualidad (2020)</label>
+            <div class="content">
+
+                <!-- Botones para cambiar el gráfico -->
+                <button class="btn btn-primary" onclick="cambiarGrafico('eco1_2020')">Achs</button>
+                <button class="btn btn-primary" onclick="cambiarGrafico('eco2_2020')">Museg</button>
+                <button class="btn btn-primary" onclick="cambiarGrafico('eco3_2020')">Ist</button>
+
+                <!-- Contenedor de gráficos -->
+
+                <div id="plotly_div_eco1_2020" class="plot-container">{{ plotly_div18|safe }}</div>
+                <div id="plotly_div_eco2_2020" class="plot-container">{{ plotly_div26|safe }}</div>
+                <div id="plotly_div_eco3_2020" class="plot-container">{{ plotly_div34|safe }}</div>
+
+            </div>
+        </li>
+        <li>
+            <input type="checkbox" class="accordion" id="6" onclick="cambiarGrafico('eco1_2019'); desactivarOtros(this)">
+            <label for="6">Datos Actividad Economica segun Mutualidad (2019)</label>
+            <div class="content">
+
+                <!-- Botones para cambiar el gráfico -->
+                <button class="btn btn-primary" onclick="cambiarGrafico('eco1_2019')">Achs</button>
+                <button class="btn btn-primary" onclick="cambiarGrafico('eco2_2019')">Museg</button>
+                <button class="btn btn-primary" onclick="cambiarGrafico('eco3_2019')">Ist</button>
+
+                <!-- Contenedor de gráficos -->
+
+                <div id="plotly_div_eco1_2019" class="plot-container">{{ plotly_div19|safe }}</div>
+                <div id="plotly_div_eco2_2019" class="plot-container">{{ plotly_div27|safe }}</div>
+                <div id="plotly_div_eco3_2019" class="plot-container">{{ plotly_div35|safe }}</div>
+
+            </div>
+        </li>
+        <li>
+            <input type="checkbox" class="accordion" id="7" onclick="cambiarGrafico('eco1_2018'); desactivarOtros(this)">
+            <label for="7">Datos Actividad Economica segun Mutualidad (2018)</label>
+            <div class="content">
+
+                <!-- Botones para cambiar el gráfico -->
+                <button class="btn btn-primary" onclick="cambiarGrafico('eco1_2018')">Achs</button>
+                <button class="btn btn-primary" onclick="cambiarGrafico('eco2_2018')">Museg</button>
+                <button class="btn btn-primary" onclick="cambiarGrafico('eco3_2018')">Ist</button>
+
+                <!-- Contenedor de gráficos -->
+
+                <div id="plotly_div_eco1_2018" class="plot-container">{{ plotly_div20|safe }}</div>
+                <div id="plotly_div_eco2_2018" class="plot-container">{{ plotly_div28|safe }}</div>
+                <div id="plotly_div_eco3_2018" class="plot-container">{{ plotly_div36|safe }}</div>
+
+            </div>
+        </li>
+        <li>
+            <input type="checkbox" class="accordion" id="8" onclick="cambiarGrafico('eco1_2017'); desactivarOtros(this)">
+            <label for="8">Datos Actividad Economica segun Mutualidad (2017)</label>
+            <div class="content">
+
+                <!-- Botones para cambiar el gráfico -->
+                <button class="btn btn-primary" onclick="cambiarGrafico('eco1_2017')">Achs</button>
+                <button class="btn btn-primary" onclick="cambiarGrafico('eco2_2017')">Museg</button>
+                <button class="btn btn-primary" onclick="cambiarGrafico('eco3_2017')">Ist</button>
+
+                <!-- Contenedor de gráficos -->
+
+                <div id="plotly_div_eco1_2017" class="plot-container">{{ plotly_div21|safe }}</div>
+                <div id="plotly_div_eco2_2017" class="plot-container">{{ plotly_div29|safe }}</div>
+                <div id="plotly_div_eco3_2017" class="plot-container">{{ plotly_div37|safe }}</div>
+
+            </div>
+        </li>
+        <li>
+            <input type="checkbox" class="accordion" id="9" onclick="cambiarGrafico('eco1_2016'); desactivarOtros(this)">
+            <label for="9">Datos Actividad Economica segun Mutualidad (2016)</label>
+            <div class="content">
+
+                <!-- Botones para cambiar el gráfico -->
+                <button class="btn btn-primary" onclick="cambiarGrafico('eco1_2016')">Achs</button>
+                <button class="btn btn-primary" onclick="cambiarGrafico('eco2_2016')">Museg</button>
+                <button class="btn btn-primary" onclick="cambiarGrafico('eco3_2016')">Ist</button>
+
+                <!-- Contenedor de gráficos -->
+
+                <div id="plotly_div_eco1_2016" class="plot-container">{{ plotly_div22|safe }}</div>
+                <div id="plotly_div_eco2_2016" class="plot-container">{{ plotly_div30|safe }}</div>
+                <div id="plotly_div_eco3_2016" class="plot-container">{{ plotly_div38|safe }}</div>
+
+            </div>
+        </li>
+    </ul>
+
+</div>
+
+<footer class="pie-pagina">
+    <div class="grupo-1">
+        <div class="box">
+            <figure>
+                <a href="">
+                    <img src="{% static 'img/logoDuoc.png' %}" alt="Logo">
+                </a>
+            </figure>
+        </div>
+        <div class="box">
+            <h2></h2>
+            <p>Es mejor prepárese y prevenir en lugar de reparar y arrepentirse</p>
+        </div>
+        <div class="box">
+            <h2>Siguenos</h2>
+            <div class="social">
+                <a href="#" class="fa fa-facebook"></a>
+                <a href="#" class="fa fa-instagram"></a>
+                <a href="#" class="fa fa-youtube"></a>
+                <a href="#" class="fa fa-whatsapp"></a>
+            </div>
+        </div>
+    </div>
+
+    <div class="grupo-2">
+        <small>&copy; 2023 Tu Empresa. Todos los derechos reservados.</small>
+    </div>
+</footer>
+
+<script>
+
+    function desactivarOtros(checkbox) {
+        // Obtener todos los checkboxes
+        var checkboxes = document.querySelectorAll('.accordion');
+
+        // Desactivar todos los checkboxes excepto el que se hizo clic
+        checkboxes.forEach(function (element) {
+            if (element !== checkbox) {
+                element.checked = false;
+            }
+        });
+    }
+</script>
+
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>
