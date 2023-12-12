@@ -46,11 +46,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'core',
     'authentication',
-    'myForum',
-    'django_extensions',
-    'tinymce',
-    'hitcount',
-    'taggit'
+
 
 
 ]
