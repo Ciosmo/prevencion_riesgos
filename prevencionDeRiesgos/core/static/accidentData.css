@@ -12,6 +12,11 @@ body {
     min-height: 100vh;
 }
 
+.volver{
+    float: left;
+    margin-left: 30px;
+}
+
 .logo{
     cursor: pointer;
     float: right;
@@ -201,16 +206,10 @@ nav ul li a:hover{
     border: 1px solid #ddd;
     padding: 8px;
     text-align: left;
-    overflow: hidden;
 }
 
 .accidentes-table th {
     background-color: #f2f2f2;
-}
-
-.accidentes-table td a{
-    text-decoration: none;
-    color: rgb(9, 193, 9)
 }
 
 
@@ -221,113 +220,6 @@ nav ul li a:hover{
         height: 50px;
         width: auto;
         padding-left: 60px;
-        float: right;
-    }
-
-    nav ul li a{
-        font-size: 20px;
-        color: white
-    }
-
-    .checkbtn{
-        display: block;
-    }
-    
-    .header{
-        position: fixed;
-        width: 100%;
-    }
-
-    nav{
-        width: 100%;
-    }
-
-    nav ul{
-        position: fixed;
-        z-index: 1000;
-        width: 70%;
-        height: 120vh;
-        background: rgb(85, 84, 84);
-        top: 80px;
-        left: -115%;
-        text-align: center;
-        transition: all .5s;
-    }
-
-    nav ul li{
-        display: block;
-        width: 70%;
-        margin: 20px;
-        background-color: gray;
-        padding: 10px;
-        border-radius: 8px;
-        justify-content: center;
-    }
-
-    #check:checked ~ ul{
-        left: -10%;
-    }
-
-    .content {
-        padding: 10px;
-        padding-top: 100px;
-        padding-bottom: 20px;
-        flex: 1;
-    }
-
-
-    .accordion{
-        margin: 10px auto;
-        width: 400px;
-        
-    }
-
-    .accordion ul{
-        list-style: none;
-        width: 70%;
-        margin: 10px;
-        padding: 0px;
-    }
-
-    .accordion ul li{
-        list-style: none;
-        width: 70%;
-        margin: 10px;
-        padding: 0px;
-    }
-    
-    .accordion li label{
-        display: flex;
-        align-items: center;
-        padding: 10px;
-        font-size: 15px;
-        cursor: pointer;
-    }
-
-    .btn{
-        width: 60px;
-        padding: 5px;
-        height: auto;
-        font-size: small;
-        text-align: center;
-    }
-
-    .pie-pagina .grupo-1{
-        width: 100%;
-        grid-template-columns: repeat(1, 1fr);
-        grid-gap: 30px;
-        padding: 35px 0px;
-        font-size: small;
-    }
-
-    .pie-pagina .grupo-1 .social a:hover{
-        color: aqua;
-    }
-
-    .pie-pagina .grupo-2{
-        padding: 10px;
-        font-size: small;
-        width: 100%;
     }
 }
 

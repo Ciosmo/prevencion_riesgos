@@ -46,7 +46,7 @@
                 <th>Nombre</th>
                 <th>Actividad Económica</th>
                 <th>Género</th>
-                <th>Comuna</th>
+                <th>Region</th>
                 <th>Fecha Accidente</th>
                 <th>Hora Accidente</th>
                 <th>Tipo Accidente</th>
@@ -57,16 +57,13 @@
             {% for accidente in accidentes %}
                 <tr>
                     <td>{{ accidente.nombre_empleado }}</td>
-                    <td>{{ accidente.actividad_economica }}</td>
+                    <td><a href="{% url 'accidente_detail' accidente.id %}">{{ accidente.actividad_economica }}</a></td>
                     <td>{{ accidente.genero }}</td>
-                    <td>{{ accidente.comuna }}</td>
+                    <td>{{ accidente.region }}</td>
                     <td>{{ accidente.fecha_accidente }}</td>
                     <td>{{ accidente.hora_accidente }}</td>
                     <td>{{ accidente.tipo_accidente }}</td>
                     <td>{{ accidente.descripcion_accidente }}</td>
-                    <td>
-                        <button class="ver-relacionados" data-accidente-id="{{ accidente.id }}">Comparar datos</button>
-                    </td>
                 </tr>
             {% endfor %}
         </tbody>
@@ -102,27 +99,6 @@
         <small>&copy; 2023 Tu Empresa. Todos los derechos reservados.</small>
     </div>
 </footer>
-
-<script>
-    $(document).ready(function() {
-        $(".ver-relacionados").click(function() {
-            var accidenteId = $(this).data("accidente-id");
-
-            // Realizar una solicitud AJAX al servidor para ejecutar la función
-            $.ajax({
-                url: `/ver_datos_relacionados/${accidenteId}/`,  // Ajusta la URL según tu configuración
-                type: "GET",
-                success: function(response) {
-                    // Manejar la respuesta del servidor
-                    console.log(response);
-                },
-                error: function(error) {
-                    console.log(error);
-                }
-            });
-        });
-    });
-</script>
 
 </body>
 </html>

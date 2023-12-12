@@ -1,86 +1,31 @@
 from django import forms
-from .models import AccidenteLaboral, EconomicActivity
+from .models import AccidenteLaboral, EconomicActivity, Region, Category
 
-COMUNAS_CHOICES = [
-    ('--------', '---------'),
-    ('ancud', 'Ancud'),
-    ('angol', 'Angol'),
-    ('antofagasta', 'Antofagasta'),
-    ('arica', 'Arica'),
-    ('cauquenes', 'Cauquenes'),
-    ('calama', 'Calama'),
-    ('caldera', 'Caldera'),
-    ('castro', 'Castro'),
-    ('chanaral', 'Chañaral'),
-    ('chillan', 'Chillán'),
-    ('concepcion', 'Concepción'),
-    ('constitucion', 'Constitución'),
-    ('coquimbo', 'Coquimbo'),
-    ('coronel', 'Coronel'),
-    ('curico', 'Curicó'),
-    ('futrono', 'Futrono'),
-    ('huasco', 'Huasco'),
-    ('illapel', 'Illapel'),
-    ('la florida', 'La Florida'),
-    ('la serena', 'La Serena'),
-    ('la union', 'La Unión'),
-    ('las condes', 'Las Condes'),
-    ('linares', 'Linares'),
-    ('los angeles', 'Los Ángeles'),
-    ('machali', 'Machalí'),
-    ('maipu', 'Maipú'),
-    ('mejillones', 'Mejillones'),
-    ('melipilla', 'Melipilla'),
-    ('osorno', 'Osorno'),
-    ('ovalle', 'Ovalle'),
-    ('padre_las_casas', 'Padre Las Casas'),
-    ('panguipulli', 'Panguipulli'),
-    ('punta arenas', 'Punta Arenas'),
-    ('puerto montt', 'Puerto Montt'),
-    ('puerto natales', 'Puerto Natales'),
-    ('puerto varas', 'Puerto Varas'),
-    ('puerto williams', 'Puerto Williams'),
-    ('putre', 'Putre'),
-    ('quillota', 'Quillota'),
-    ('quilpue', 'Quilpué'),
-    ('rancagua', 'Rancagua'),
-    ('rengo', 'Rengo'),
-    ('rio bueno', 'Río Bueno'),
-    ('san antonio', 'San Antonio'),
-    ('san fernando', 'San Fernando'),
-    ('santiago', 'Santiago'),
-    ('sierra gorda', 'Sierra Gorda'),
-    ('talca', 'Talca'),
-    ('talcahuano', 'Talcahuano'),
-    ('temuco', 'Temuco'),
-    ('tocopilla', 'Tocopilla'),
-    ('valdivia', 'Valdivia'),
-    ('valparaiso', 'Valparaíso'),
-    ('vallenar', 'Vallenar'),
-    ('valparaiso', 'Valparaíso'),
-    ('victoria', 'Victoria'),
-    ('villa alemana', 'Villa Alemana'),
-    ('villarrica', 'Villarrica'),
-    ('vinadelmar', 'Viña del Mar'),
-    ('vicuna', 'Vicuña'),
-]
 
 class AccidenteForm(forms.ModelForm):
-    comuna = forms.ChoiceField(choices=COMUNAS_CHOICES, label='Comuna')
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
         # Filtrar el queryset para incluir solo actividades con ID del 1 al 17
-        queryset = EconomicActivity.objects.filter(id__in=range(1, 18))
+        queryset_actividad = EconomicActivity.objects.filter(id__in=range(1, 18))
+        queryset_region = Region.objects.filter(id__in=range(1, 17))
+        queryset_tipo_accidente = Category.objects.filter(id__in=[1, 2, 6])
 
-        # Agregar '----------' al principio del queryset
-        choices = [('', '----------')] + [(obj.id, str(obj)) for obj in queryset]
-        self.fields['actividad_economica'].choices = choices
-        self.fields['actividad_economica'].required = True  # Hacer el campo requerido
+        # Agregar '----------' al principio del queryset para actividad_economica
+        choices_actividad = [(None, '----------')] + [(obj.id, str(obj)) for obj in queryset_actividad]
+        self.fields['actividad_economica'].choices = choices_actividad
+        self.fields['actividad_economica'].required = True
 
-        # Agregar script JS al widget del campo para establecer el valor predeterminado
-        self.fields['actividad_economica'].widget.attrs['onload'] = "this.value='';"
+        # Agregar '----------' al principio del queryset para region
+        choices_region = [(None, '----------')] + [(obj.id, str(obj)) for obj in queryset_region]
+        self.fields['region'].choices = choices_region
+        self.fields['region'].required = True
+
+        # Agregar '----------' al principio del queryset para tipo_accidente
+        choices_tipo_accidente = [(None, '----------')] + [(obj.id, str(obj)) for obj in queryset_tipo_accidente]
+        self.fields['tipo_accidente'].choices = choices_tipo_accidente
+        self.fields['tipo_accidente'].required = True
 
     class Meta:
         model = AccidenteLaboral

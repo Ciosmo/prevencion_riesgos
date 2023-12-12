@@ -10,25 +10,25 @@ class Category(models.Model):
     name = models.CharField(max_length=250)
 
     def __str__(self):
-        return self.name
+        return f"{self.name}"
 
 class EconomicActivity(models.Model):
     activity_name = models.CharField(max_length=255)
 
     def __str__(self):
-        return self.activity_name
+        return f"{self.activity_name}"
 
 class Mutualidad(models.Model):
     mutualidad_name = models.CharField(max_length=255)
 
     def __str__(self):
-        return self.mutualidad_name
+        return f"{self.mutualidad_name}"
     
 class Region(models.Model):
     region = models.CharField(max_length=255, null=True)
 
     def __str__(self):
-        return self.region
+        return f"{self.region}"
 
 class DiasxActividad(models.Model):
     year = models.ForeignKey(Year, on_delete=models.CASCADE, null=True)
@@ -109,10 +109,10 @@ class AccidenteLaboral(models.Model):
     nombre_empleado = models.CharField(max_length=255)
     actividad_economica = models.ForeignKey(EconomicActivity, on_delete=models.CASCADE, default=1)
     genero = models.CharField(max_length=10, choices=[('Masculino', 'Masculino'), ('Femenino', 'Femenino')], null=True)
-    comuna = models.CharField(max_length=255)
+    region = models.ForeignKey(Region, on_delete=models.CASCADE, default=1)
     fecha_accidente = models.DateField()
     hora_accidente = models.TimeField()
-    tipo_accidente = models.CharField(max_length=50, choices=[('Trabajo', 'Trabajo'), ('Trayecto', 'Trayecto')])
+    tipo_accidente = models.ForeignKey(Category, on_delete=models.CASCADE, default=1)
     descripcion_accidente = models.TextField()
 
     def __str__(self):
