@@ -1,0 +1,47 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'form.css' %}">
+    <title>Registrate</title>
+</head>
+<body>
+
+<!-- Barra de tareas -->
+<div class="header">
+  <nav class="navbar">
+      <ul class="nav-links">
+          <li><a href="javascript:void(0);" onclick="goBack()">
+            <img src="{% static 'volver.png' %}" alt="Logo">
+          </a></li>
+      </ul>
+      <div class="logo">
+          <img src="{% static 'riesgo.png' %}" alt="Logo">
+      </div>
+  </nav>
+</div>
+
+<div class="content">
+
+  <h1>Registrar Accidente</h1>
+{% block content %}
+  <form method="post" action="{% url 'registrar_accidente' %}">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Registrar</button>
+  </form>
+{% endblock %}
+
+</div>
+
+</body>
+
+<script>
+  function goBack() {
+      window.history.back();
+  }
+</script>
+</html>

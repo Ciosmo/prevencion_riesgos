@@ -6,6 +6,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js" integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="{% static 'main.css' %}">
     <script src="https://kit.fontawesome.com/827f93132a.js" crossorigin="anonymous"></script>
     <title>Datos Prevencion de Riesgos</title>
@@ -21,12 +23,12 @@
         </label>
         <ul class="nav-links">
             <li><a href="#">Inicio</a></li>
-            <li><a href="/grafico">Graficos</a></li>
+            <!--<li><a href="/grafico">Graficos</a></li>-->
             <li><a href="{% url 'login' %}">Iniciar sesión</a></li>
             <li><a href="{% url 'signup' %}">Registrarse</a></li>
         </ul>
         <div class="logo">
-            <img src="{% static 'riesgo.png' %}" alt="Logo">
+            <img src="{% static 'img/riesgo.png' %}" alt="Logo">
         </div>
     </nav>
 <!--<a href="#" class="btn"><button>ChatGPT</button></a>-->
@@ -34,7 +36,34 @@
 
 <!-- Contenido -->
 <div class="content">
-    <p>Bienvenido a la pagina donde podra ver informacion proveniente de la SUSESO, en donde podra visualizar los dato en graficos interactivos </p>
+    <h4>Bienvenido a la pagina donde podra ver informacion proveniente de la SUSESO, en donde podra visualizar los dato en graficos interactivos.</h4>
+    <div id="carouselExample" class="carousel slide">
+        <div class="carousel-inner">
+          <div class="carousel-item active">
+            <img src="{% static 'img/carrusel.jpeg' %}" class="d-block w-100 w-100 h-100" alt="...">
+          </div>
+          <div class="carousel-item">
+            <img src="{% static 'img/carrusel4.jpg' %}" class="d-block w-100" alt="...">
+          </div>
+          <div class="carousel-item">
+            <img src="{% static 'img/carrusel3.jpg' %}" class="d-block w-100" alt="...">
+          </div>
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample" data-bs-slide="prev">
+          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#carouselExample" data-bs-slide="next">
+          <span class="carousel-control-next-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Next</span>
+        </button>
+      </div>
+
+    <p>Explora nuestras herramientas especializadas y recursos diseñados para potenciar tus habilidades como prevencionista de riesgos.
+        Los datos mas accesibles te permitirar analizar mas detalladamente las situaciones y te permitirar tomar decisiones basandote en
+        datos reales
+    </p>
+    <p>Y recuerda: La seguridad es primero!!!</p>
 
 
 
@@ -45,13 +74,13 @@
         <div class="box">
             <figure>
                 <a href="">
-                    <img src="{% static 'logoDuoc.png' %}" alt="Logo">
+                    <img src="{% static 'img/logoDuoc.png' %}" alt="Logo">
                 </a>
             </figure>
         </div>
         <div class="box">
-            <h2>Conocenos</h2>
-            <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Porro, eius.</p>
+            <h2></h2>
+            <p>Es mejor prepárese y prevenir en lugar de reparar y arrepentirse</p>
         </div>
         <div class="box">
             <h2>Siguenos</h2>

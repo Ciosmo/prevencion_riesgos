@@ -1,0 +1,150 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{% static 'accidentData.css' %}">
+    <title>Detalles de Accidente Laboral</title>
+    <script src="https://kit.fontawesome.com/827f93132a.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+
+    <!-- Barra de tareas -->
+    <div class="header">
+        <nav class="navbar">
+            <div class="volver">
+                <a href="javascript:void(0);" onclick="goBack()">
+                    <img src="{% static 'volver.png' %}" alt="Logo">
+                </a>
+            </div>
+            <div class="logo">
+                <img src="{% static 'riesgo.png' %}" alt="Logo">
+            </div>
+        </nav>
+    </div>
+
+  <div class="content">
+
+    <h2>Detalles: {{ accidente.nombre_empleado }}</h2>
+
+    <!-- Muestra los datos del AccidenteLaboral -->
+    <p>Actividad Económica: {{ accidente.actividad_economica }}</p>
+    <p>Genero: {{ accidente.genero }}</p>
+    <p>Region: {{ accidente.region }}</p>
+    <p>Fecha del Accidente: {{ accidente.fecha_accidente }}</p>
+
+    <h2>Promedio de Días perdidos</h2><br>
+    
+    <table class="accidentes-table">
+        <thead>
+            <tr>
+                <th>Año</th>
+                <th>Achs</th>
+                <th>Museg</th>
+                <th>Cchc</th>
+                <th>Ist</th>
+            </tr>
+        </thead>
+        <tbody>
+                {% for dia in diasxactividad %}
+                <tr>
+                    <td>{{ dia.year.year }}</td>
+                    <td>{{ dia.achs }}</td>
+                    <td>{{ dia.museg }}</td>
+                    <td>{{ dia.cchc }}</td>
+                    <td>{{ dia.ist }}</td>
+                </tr>
+                {% endfor %}
+        </tbody>
+    </table><br>
+
+    <h2>Tasa de accidentabilidad</h2><br>
+
+    <table class="accidentes-table">
+        <thead>
+            <tr>
+                <th>Año</th>
+                <th>Achs</th>
+                <th>Museg</th>
+                <th>Cchc</th>
+                <th>Ist</th>
+            </tr>
+        </thead>
+        <tbody>
+                {% for dia in tasaxact %}
+                <tr>
+                    <td>{{ dia.year.year }}</td>
+                    <td>{{ dia.achs }}</td>
+                    <td>{{ dia.museg }}</td>
+                    <td>{{ dia.cchc }}</td>
+                    <td>{{ dia.ist }}</td>
+                </tr>
+                {% endfor %}
+        </tbody>
+    </table><br>
+
+    <h2>Fallecidos por accidente</h2><br>
+
+    <table class="accidentes-table">
+        <thead>
+            <tr>
+                <th>Año</th>
+                <th>Achs</th>
+                <th>Museg</th>
+                <th>Cchc</th>
+                <th>Ist</th>
+            </tr>
+        </thead>
+        <tbody>
+                {% for dia in fallecidosxact %}
+                <tr>
+                    <td>{{ dia.year.year }}</td>
+                    <td>{{ dia.achs }}</td>
+                    <td>{{ dia.museg }}</td>
+                    <td>{{ dia.cchc }}</td>
+                    <td>{{ dia.ist }}</td>
+                </tr>
+                {% endfor %}
+        </tbody>
+    </table><br>
+
+    <h2>Fallecidos por género</h2><br>
+
+    <table class="accidentes-table">
+        <thead>
+            <tr>
+                <th>Año</th>
+                <th>Hombre</th>
+                <th>Mujer</th>
+            </tr>
+        </thead>
+        <tbody>
+                {% for dia in fallecidosxsexo %}
+                <tr>
+                    <td>{{ dia.year.year }}</td>
+                    <td>{{ dia.men }}</td>
+                    <td>{{ dia.women }}</td>
+                </tr>
+                {% endfor %}
+        </tbody>
+    </table><br>
+
+  </div>
+
+
+
+</body>
+
+<script>
+    function goBack() {
+        window.history.back();
+    }
+</script>
+
+</html>
