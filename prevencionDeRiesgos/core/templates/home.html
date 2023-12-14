@@ -22,8 +22,14 @@
             <i class="fas fa-bars"></i>
         </label>
         <ul class="nav-links">
+        {% if not usuario_actual.is_authenticated %}
             <li><a href="{% url 'login' %}">Iniciar sesión</a></li>
             <li><a href="{% url 'signup' %}">Registrarse</a></li>
+        {% endif %}
+        {% if usuario_actual.is_authenticated %}
+            <li><a href="{% url 'logout' %}">Cerrar sesion</a></li>
+            <li><a href="/grafico">Grafico</a></li>
+        {% endif %}
             <li><a href="/info">¿Que hacer en caso de un accidente?</a></li>
         </ul>
         <div class="logo">
@@ -35,7 +41,7 @@
 
 <!-- Contenido -->
 <div class="content">
-    <h4>Bienvenido a la pagina donde podra ver informacion proveniente de la SUSESO, en donde podra visualizar los dato en graficos interactivos.</h4>
+    <h4>Bienvenido a la página donde podrás ver información proveniente de la SUSESO, donde podrás visualizar datos en gráficos interactivos.</h4>
     <img src="" alt="">
 </div>
 

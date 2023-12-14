@@ -14,7 +14,10 @@ import pandas as pd
 from core.form import AccidenteForm
 
 def home(request):
-    return render(request, 'home.html')
+
+    usuario_actual = request.user
+
+    return render(request, 'home.html', {'usuario_actual': usuario_actual})
 
 def info(request):
     return render(request, 'info.html')
@@ -44,6 +47,7 @@ def registrar_accidente(request):
 
     return render(request, 'Formulario.html', {'form': form})
 
+@login_required
 def accidente_detail(request, accidente_id):
 
     accidente = get_object_or_404(AccidenteLaboral, pk=accidente_id)

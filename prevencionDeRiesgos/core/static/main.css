@@ -28,8 +28,13 @@ body {
     transform: scale(1.2);
 }
 
+.volver{
+    float: left;
+    margin-left: 30px;
+}
+
 nav{
-    background-color: #333;
+    background-color: #001F3F;
     height: 85px;
     width: 100%;
 }
@@ -165,7 +170,7 @@ nav ul li a:hover{
 
 .pie-pagina{
     width: 100%;
-    background-color: #333;
+    background-color: #001F3F;
     color: white;
 }
 
@@ -230,6 +235,15 @@ nav ul li a:hover{
 
 .accidentes-table th {
     background-color: #f2f2f2;
+}
+
+.accidentes-table a{
+    text-decoration: none;
+    color: black;
+}
+
+.accidentes-table a:hover{
+    color: blue
 }
 
 
